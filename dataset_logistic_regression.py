@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, recall_score
+import joblib
 
 # Load preprocessed data
 df = pd.read_csv('preprocessed_fake_job_postings.csv')
@@ -120,3 +121,26 @@ probs = model_tfidf.predict_proba(sample_X)[:, 1]
 for text, pred, prob in zip(test_samples, preds, probs):
     print(f"Text: {text}")
     print(f"→ Prediction: {'Fake' if pred == 1 else 'Real'}, Prob(Fake): {prob:.4f}\n")
+
+# Save Model & Vectorizer
+joblib.dump(model_tfidf, 'fake_job_model.pkl')
+joblib.dump(vec_tfidf, 'tfidf_vectorizer.pkl')
+
+print("\nModel and vectorizer saved:")
+print("→ fake_job_model.pkl")
+print("→ tfidf_vectorizer.pkl")
+
+# Manual Inspection
+print("\n" + "="*60)
+print("MANUAL INSPECTION: 1 Real + 1 Fake")
+print("="*60)
+fake_sample = df[df['predicted_proba'] > 0.8].sample(1)
+real_sample = df[df['predicted_proba'] < 0.1].sample(1)
+
+print("\nPREDICTED FAKE:")
+print(f"Prob: {fake_sample['predicted_proba'].iloc[0]:.4f} | True Label: {fake_sample['fraudulent'].iloc[0]}")
+print(fake_sample['clean_description'].iloc[0][:500] + "...")
+
+print("\nPREDICTED REAL:")
+print(f"Prob: {real_sample['predicted_proba'].iloc[0]:.4f} | True Label: {real_sample['fraudulent'].iloc[0]}")
+print(real_sample['clean_description'].iloc[0][:500] + "...")
