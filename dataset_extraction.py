@@ -81,3 +81,13 @@ top_20_words = sorted(word_freq_pairs, key=lambda x: x[1], reverse=True)[:20]
 print("Top 20 Most Frequent Words:")
 for word, freq in top_20_words:
     print(f"{word}: {int(freq)}")
+
+# Print top 15 words
+print("\nTop 15 Words with Highest TF-IDF Scores (Global)")
+tfidf_means = X_tfidf.mean(axis=0).A1  # average TF-IDF per word
+feature_names = tfidf_vectorizer.get_feature_names_out()
+top15_idx = tfidf_means.argsort()[-15:][::-1]
+top15_words = [(feature_names[i], tfidf_means[i]) for i in top15_idx]
+
+for word, score in top15_words:
+    print(f"{word}: {score:.6f}")
