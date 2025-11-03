@@ -149,14 +149,16 @@ print("="*80)
 print(results_df.round(4))
 
 # Plot comparison
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(12, 6))
 metrics = ['Accuracy', 'Recall (Fake)', 'F1 (Fake)']
 for i, metric in enumerate(metrics):
     plt.subplot(1, 3, i+1)
-    sns.barplot(data=results_df, x='Model', y=metric, palette='viridis')
+    sns.barplot(data=results_df, x='Model', y=metric, hue='Model', palette='viridis', legend=False)
     plt.title(metric)
     plt.xticks(rotation=45, ha='right')
     plt.ylabel('')
+    plt.xlabel('')
+plt.suptitle('Model Comparison: Logistic Regression vs Tree Models', fontsize=14, y=1.02)
 plt.tight_layout()
 plt.show()
 
