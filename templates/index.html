@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fake Job Detector</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #4c4ba2ff 100%);
+        color: #333;
+        margin: 0;
+        padding: 40px 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        text-align: center;
+        color: #4a00e0;
+        margin-bottom: 10px;
+      }
+      p.subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.1em;
+      }
+      form {
+        margin: 30px 0;
+      }
+      textarea {
+        width: 100%;
+        height: 140px;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+        resize: vertical;
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        margin-top: 15px;
+        background: #5d2de2ff;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      button:hover {
+        background: #1955edff;
+        transform: translateY(-2px);
+      }
+      .tips {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 30px 0;
+        border-left: 5px solid #2d60e2ff;
+      }
+      .tips h3 {
+        margin-top: 0;
+        color: #4a00e0;
+      }
+      .error {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        color: #aaa;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Fake Job Detector</h1>
+      <p class="subtitle">
+        Paste any job description to check if it's real or a scam
+      </p>
+
+      <form action="/predict" method="POST">
+        <textarea
+          name="job_description"
+          placeholder="Paste the full job post here..."
+          required
+        ></textarea>
+        <button type="submit">Check Authenticity</button>
+      </form>
+
+      {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
+
+      <div class="tips">
+        <h3>Tips to Avoid Fake Jobs</h3>
+        <ul style="text-align: left; line-height: 1.8">
+          <li>Never pay money to apply or "secure" a job</li>
+          <li>Be cautious of "work from home" with high pay + no experience</li>
+          <li>Check if the company has a real website and LinkedIn</li>
+          <li>Avoid jobs asking for "training fees" or "registration"</li>
+          <li>Real jobs rarely use words like "urgent", "limited seats"</li>
+        </ul>
+      </div>
+
+      <footer>
+        <p>
+          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
