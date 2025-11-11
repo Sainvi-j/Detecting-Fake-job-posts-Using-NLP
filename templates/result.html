@@ -11,7 +11,6 @@
       body {
         font-family: "Poppins", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #333;
         margin: 0;
         padding: 40px 20px;
         min-height: 100vh;
@@ -26,7 +25,7 @@
         text-align: center;
       }
       .result {
-        font-size: 32px;
+        font-size: 36px;
         font-weight: 600;
         margin: 20px 0;
       }
@@ -36,10 +35,6 @@
       .real {
         color: #27ae60;
       }
-      .confidence {
-        font-size: 20px;
-        margin: 20px 0;
-      }
       progress {
         width: 80%;
         height: 30px;
@@ -47,12 +42,12 @@
         margin: 20px auto;
         display: block;
       }
-      progress::-webkit-progress-bar {
-        background-color: #eee;
-        border-radius: 15px;
-      }
       progress::-webkit-progress-value {
         background: linear-gradient(90deg, #8e2de2, #4a00e0);
+        border-radius: 15px;
+      }
+      progress::-webkit-progress-bar {
+        background-color: #eee;
         border-radius: 15px;
       }
       .desc {
@@ -61,8 +56,6 @@
         border-radius: 12px;
         margin: 30px 0;
         text-align: left;
-        font-size: 15px;
-        line-height: 1.6;
       }
       a {
         display: inline-block;
@@ -77,6 +70,20 @@
       a:hover {
         background: #7919c2;
       }
+      .stats {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 30px 0;
+      }
+      .fake {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      .real {
+        color: #27ae60;
+        font-weight: bold;
+      }
       footer {
         margin-top: 50px;
         color: #aaa;
@@ -86,8 +93,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Analysis Complete!</h1>
-
+      <h1>Result</h1>
       <div class="result">
         {% if label == "Fake Job" %}
         <span class="fake">FAKE JOB DETECTED</span>
@@ -96,10 +102,9 @@
         {% endif %}
       </div>
 
-      <div class="confidence">
+      <div style="font-size: 20px">
         Confidence: <strong>{{ confidence }}%</strong>
       </div>
-
       <progress value="{{ confidence }}" max="100"></progress>
 
       <div class="desc">
@@ -107,11 +112,20 @@
         <p>{{ description }}</p>
       </div>
 
+      <div class="stats">
+        <h3>Live Dashboard</h3>
+        <p>
+          Fake: <span class="fake">{{ fake }}</span> | Real:
+          <span class="real">{{ real }}</span>
+        </p>
+      </div>
+
       <a href="/">Check Another Job</a>
 
       <footer>
         <p>
-          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP
+          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP •
+          November 2025
         </p>
       </footer>
     </div>

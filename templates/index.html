@@ -10,11 +10,11 @@
     <style>
       body {
         font-family: "Poppins", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #4c4ba2ff 100%);
-        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         margin: 0;
         padding: 40px 20px;
         min-height: 100vh;
+        color: #333;
       }
       .container {
         max-width: 800px;
@@ -34,50 +34,57 @@
         color: #666;
         font-size: 1.1em;
       }
-      form {
-        margin: 30px 0;
-      }
       textarea {
-        width: 100%;
+        width: 95%;
         height: 140px;
         padding: 15px;
         border: 2px solid #ddd;
         border-radius: 12px;
         font-size: 16px;
-        resize: vertical;
       }
       button {
-        display: block;
         width: 100%;
         padding: 15px;
         margin-top: 15px;
-        background: #5d2de2ff;
+        background: #8e2de2;
         color: white;
         border: none;
         border-radius: 12px;
         font-size: 18px;
         font-weight: 600;
         cursor: pointer;
-        transition: 0.3s;
       }
       button:hover {
-        background: #1955edff;
+        background: #7919c2;
         transform: translateY(-2px);
+      }
+      .error {
+        color: #e74c3c;
+        font-weight: bold;
+        margin: 15px 0;
       }
       .tips {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 12px;
         margin: 30px 0;
-        border-left: 5px solid #2d60e2ff;
+        border-left: 5px solid #8e2de2;
       }
-      .tips h3 {
-        margin-top: 0;
-        color: #4a00e0;
+      .stats {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 30px 0;
       }
-      .error {
+      .fake {
         color: #e74c3c;
         font-weight: bold;
+        font-size: 1.2em;
+      }
+      .real {
+        color: #27ae60;
+        font-weight: bold;
+        font-size: 1.2em;
       }
       footer {
         text-align: center;
@@ -90,9 +97,7 @@
   <body>
     <div class="container">
       <h1>Fake Job Detector</h1>
-      <p class="subtitle">
-        Paste any job description to check if it's real or a scam
-      </p>
+      <p class="subtitle">Instantly detect scam job posts using AI</p>
 
       <form action="/predict" method="POST">
         <textarea
@@ -107,20 +112,26 @@
       <p class="error">{{ error }}</p>
       {% endif %}
 
+      <div class="stats">
+        <h3>Live Detection Dashboard</h3>
+        <p>Fake Jobs Detected: <span class="fake">{{ fake }}</span></p>
+        <p>Real Jobs Detected: <span class="real">{{ real }}</span></p>
+      </div>
+
       <div class="tips">
-        <h3>Tips to Avoid Fake Jobs</h3>
+        <h3>How to Avoid Fake Jobs</h3>
         <ul style="text-align: left; line-height: 1.8">
-          <li>Never pay money to apply or "secure" a job</li>
-          <li>Be cautious of "work from home" with high pay + no experience</li>
-          <li>Check if the company has a real website and LinkedIn</li>
-          <li>Avoid jobs asking for "training fees" or "registration"</li>
-          <li>Real jobs rarely use words like "urgent", "limited seats"</li>
+          <li>Never pay money to apply</li>
+          <li>Beware of "work from home + high pay + no experience"</li>
+          <li>Check company website & LinkedIn</li>
+          <li>Avoid "training fee" or "registration fee"</li>
         </ul>
       </div>
 
       <footer>
         <p>
-          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP
+          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP •
+          November 2025
         </p>
       </footer>
     </div>
