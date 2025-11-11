@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Result - Fake Job Detector</title>
+    <title>Result - Sainvi</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
@@ -12,7 +12,7 @@
         font-family: "Poppins", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         margin: 0;
-        padding: 40px 20px;
+        padding: 40px;
         min-height: 100vh;
       }
       .container {
@@ -25,7 +25,7 @@
         text-align: center;
       }
       .result {
-        font-size: 36px;
+        font-size: 40px;
         font-weight: 600;
         margin: 20px 0;
       }
@@ -35,20 +35,31 @@
       .real {
         color: #27ae60;
       }
+      .badge {
+        padding: 8px 20px;
+        border-radius: 30px;
+        color: white;
+        font-weight: bold;
+      }
+      .fake-badge {
+        background: #e74c3c;
+      }
+      .real-badge {
+        background: #27ae60;
+      }
       progress {
         width: 80%;
-        height: 30px;
-        border-radius: 15px;
+        height: 35px;
+        border-radius: 20px;
         margin: 20px auto;
-        display: block;
       }
       progress::-webkit-progress-value {
         background: linear-gradient(90deg, #8e2de2, #4a00e0);
-        border-radius: 15px;
+        border-radius: 20px;
       }
       progress::-webkit-progress-bar {
-        background-color: #eee;
-        border-radius: 15px;
+        background: #eee;
+        border-radius: 20px;
       }
       .desc {
         background: #f8f9fa;
@@ -59,51 +70,39 @@
       }
       a {
         display: inline-block;
-        margin-top: 20px;
         padding: 12px 30px;
         background: #8e2de2;
         color: white;
         text-decoration: none;
         border-radius: 12px;
         font-weight: 600;
+        margin: 20px;
       }
       a:hover {
         background: #7919c2;
       }
       .stats {
-        background: #e8f4f8;
+        background: #e8f5e8;
         padding: 20px;
         border-radius: 12px;
-        margin: 30px 0;
-      }
-      .fake {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-      .real {
-        color: #27ae60;
-        font-weight: bold;
+        margin: 20px 0;
       }
       footer {
         margin-top: 50px;
         color: #aaa;
-        font-size: 0.9em;
       }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Result</h1>
-      <div class="result">
-        {% if label == "Fake Job" %}
-        <span class="fake">FAKE JOB DETECTED</span>
-        {% else %}
-        <span class="real">REAL JOB</span>
-        {% endif %}
+      <div class="result {{ 'fake' if label == 'Fake Job' else 'real' }}">
+        {{ label }}
       </div>
-
-      <div style="font-size: 20px">
-        Confidence: <strong>{{ confidence }}%</strong>
+      <div
+        class="badge {{ 'fake-badge' if label == 'Fake Job' else 'real-badge' }}"
+      >
+        {{ confidence }}% Confidence
       </div>
       <progress value="{{ confidence }}" max="100"></progress>
 
@@ -113,20 +112,17 @@
       </div>
 
       <div class="stats">
-        <h3>Live Dashboard</h3>
+        <h3>Session Stats</h3>
         <p>
-          Fake: <span class="fake">{{ fake }}</span> | Real:
-          <span class="real">{{ real }}</span>
+          Fake: <strong style="color: #e74c3c">{{ fake }}</strong> | Real:
+          <strong style="color: #27ae60">{{ real }}</strong>
         </p>
       </div>
 
       <a href="/">Check Another Job</a>
 
       <footer>
-        <p>
-          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP •
-          November 2025
-        </p>
+        <p>Made with ❤️ by <strong>Sainvi</strong> • November 2025</p>
       </footer>
     </div>
   </body>

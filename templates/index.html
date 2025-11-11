@@ -14,7 +14,6 @@
         margin: 0;
         padding: 40px 20px;
         min-height: 100vh;
-        color: #333;
       }
       .container {
         max-width: 800px;
@@ -27,12 +26,6 @@
       h1 {
         text-align: center;
         color: #4a00e0;
-        margin-bottom: 10px;
-      }
-      p.subtitle {
-        text-align: center;
-        color: #666;
-        font-size: 1.1em;
       }
       textarea {
         width: 95%;
@@ -43,9 +36,8 @@
         font-size: 16px;
       }
       button {
-        width: 100%;
+        width: 99%;
         padding: 15px;
-        margin-top: 15px;
         background: #8e2de2;
         color: white;
         border: none;
@@ -56,81 +48,112 @@
       }
       button:hover {
         background: #7919c2;
-        transform: translateY(-2px);
+      }
+      .alert {
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        font-weight: bold;
       }
       .error {
-        color: #e74c3c;
-        font-weight: bold;
-        margin: 15px 0;
+        background: #ffebee;
+        color: #c62828;
+        border-left: 5px solid #c62828;
       }
+      .last-pred {
+        background: #e8f5e8;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+        border-left: 5px solid #4caf50;
+      }
+      .badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        color: white;
+        font-size: 0.9em;
+      }
+      .fake-badge {
+        background: #e74c3c;
+      }
+      .real-badge {
+        background: #27ae60;
+      }
+      .stats,
       .tips {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 12px;
-        margin: 30px 0;
-        border-left: 5px solid #8e2de2;
-      }
-      .stats {
-        background: #e8f4f8;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 30px 0;
+        margin: 20px 0;
       }
       .fake {
         color: #e74c3c;
         font-weight: bold;
-        font-size: 1.2em;
       }
       .real {
         color: #27ae60;
         font-weight: bold;
-        font-size: 1.2em;
       }
       footer {
         text-align: center;
         margin-top: 50px;
         color: #aaa;
-        font-size: 0.9em;
       }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Fake Job Detector</h1>
-      <p class="subtitle">Instantly detect scam job posts using AI</p>
+      <p style="text-align: center; color: #666">
+        AI-powered scam detection • November 2025
+      </p>
 
       <form action="/predict" method="POST">
         <textarea
           name="job_description"
-          placeholder="Paste the full job post here..."
+          placeholder="Paste job description here..."
           required
         ></textarea>
-        <button type="submit">Check Authenticity</button>
+        <button type="submit">Check Now</button>
       </form>
 
       {% if error %}
-      <p class="error">{{ error }}</p>
+      <div class="alert error">{{ error }}</div>
+      {% endif %} {% if last %}
+      <div class="last-pred">
+        <strong>Last Prediction:</strong><br />
+        <span
+          class="badge {{ 'fake-badge' if last.label == 'Fake Job' else 'real-badge' }}"
+        >
+          {{ last.label }} ({{ last.confidence }}%)
+        </span>
+        <p style="margin: 10px 0; font-size: 0.9em; color: #555">
+          "{{ last.desc }}"
+        </p>
+      </div>
       {% endif %}
 
       <div class="stats">
         <h3>Live Detection Dashboard</h3>
-        <p>Fake Jobs Detected: <span class="fake">{{ fake }}</span></p>
-        <p>Real Jobs Detected: <span class="real">{{ real }}</span></p>
+        <p>
+          Fake Jobs: <span class="fake">{{ fake }}</span> | Real Jobs:
+          <span class="real">{{ real }}</span>
+        </p>
       </div>
 
       <div class="tips">
-        <h3>How to Avoid Fake Jobs</h3>
-        <ul style="text-align: left; line-height: 1.8">
-          <li>Never pay money to apply</li>
-          <li>Beware of "work from home + high pay + no experience"</li>
-          <li>Check company website & LinkedIn</li>
-          <li>Avoid "training fee" or "registration fee"</li>
+        <h3>How to Spot Fake Jobs</h3>
+        <ul style="text-align: left">
+          <li>Never pay to apply</li>
+          <li>No real job asks for "training fee"</li>
+          <li>Too good to be true = fake</li>
+          <li>Check company on Google/LinkedIn</li>
         </ul>
       </div>
 
       <footer>
         <p>
-          Developed by <strong>Sainvi</strong> | Fake Job Detection Using NLP •
+          Made with ❤️ by <strong>Sainvi</strong> • Fake Job Detection Project •
           November 2025
         </p>
       </footer>
