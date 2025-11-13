@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Prediction History - Sainvi</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 40px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        text-align: center;
+        color: #4a00e0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background: #8e2de2;
+        color: white;
+      }
+      tr:hover {
+        background: #f8f9fa;
+      }
+      .fake {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      .real {
+        color: #27ae60;
+        font-weight: bold;
+      }
+      .back {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #8e2de2;
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+      }
+      .back:hover {
+        background: #7919c2;
+      }
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Prediction History</h1>
+      <p style="text-align: center; color: #666">
+        All past job checks • Latest first
+      </p>
+
+      {% if predictions %}
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Job Description</th>
+          <th>Prediction</th>
+          <th>Confidence</th>
+        </tr>
+        {% for row in predictions %}
+        <tr>
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1][:100] }}...</td>
+          <td class="{{ 'fake' if 'Fake' in row[2] else 'real' }}">
+            {{ row[2] }}
+          </td>
+          <td>{{ row[3] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p style="text-align: center; color: #777">
+        No predictions yet. Try checking a job!
+      </p>
+      {% endif %}
+
+      <div style="text-align: center; margin: 30px 0">
+        <a href="/" class="back">Back to Detector</a>
+      </div>
+
+      <footer>
+        <p>Made by <strong>Sainvi</strong> • November 2025</p>
+      </footer>
+    </div>
+  </body>
+</html>
