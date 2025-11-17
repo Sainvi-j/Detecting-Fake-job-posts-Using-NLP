@@ -1,4 +1,4 @@
-# app_final.py - SAINVI'S MASTERPIECE (Beautiful UI + Full SQLite DB)
+# (Beautiful UI + Full SQLite DB)
 from flask import Flask, render_template, request
 import joblib
 import sqlite3
