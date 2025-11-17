@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Prediction History - Sainvi</title>
+    <title>History - Sainvi</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
@@ -16,7 +16,7 @@
         min-height: 100vh;
       }
       .container {
-        max-width: 1000px;
+        max-width: 1100px;
         margin: auto;
         background: white;
         padding: 40px;
@@ -30,17 +30,17 @@
       table {
         width: 100%;
         border-collapse: collapse;
-        margin: 20px 0;
-      }
-      th,
-      td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
+        margin: 25px 0;
+        background: white;
       }
       th {
         background: #8e2de2;
         color: white;
+        padding: 15px;
+      }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
       }
       tr:hover {
         background: #f8f9fa;
@@ -55,11 +55,12 @@
       }
       .back {
         display: inline-block;
-        padding: 10px 20px;
+        padding: 12px 30px;
         background: #8e2de2;
         color: white;
         text-decoration: none;
         border-radius: 12px;
+        font-weight: 600;
       }
       .back:hover {
         background: #7919c2;
@@ -75,10 +76,10 @@
     <div class="container">
       <h1>Prediction History</h1>
       <p style="text-align: center; color: #666">
-        All past job checks • Latest first
+        All detections ever made • Latest first
       </p>
 
-      {% if predictions %}
+      {% if records %}
       <table>
         <tr>
           <th>Time</th>
@@ -86,29 +87,29 @@
           <th>Prediction</th>
           <th>Confidence</th>
         </tr>
-        {% for row in predictions %}
+        {% for job, label, conf, time in records %}
         <tr>
-          <td>{{ row[0] }}</td>
-          <td>{{ row[1][:100] }}...</td>
-          <td class="{{ 'fake' if 'Fake' in row[2] else 'real' }}">
-            {{ row[2] }}
+          <td>{{ time }}</td>
+          <td>{{ job[:120] }}...</td>
+          <td class="{{ 'fake' if 'Fake' in label else 'real' }}">
+            {{ label }}
           </td>
-          <td>{{ row[3] }}</td>
+          <td>{{ "%.2f"|format(conf) }}%</td>
         </tr>
         {% endfor %}
       </table>
       {% else %}
-      <p style="text-align: center; color: #777">
-        No predictions yet. Try checking a job!
+      <p style="text-align: center; color: #777; font-size: 1.2em">
+        No predictions yet!
       </p>
       {% endif %}
 
-      <div style="text-align: center; margin: 30px 0">
+      <div style="text-align: center; margin: 40px 0">
         <a href="/" class="back">Back to Detector</a>
       </div>
 
       <footer>
-        <p>Made by <strong>Sainvi</strong> • November 2025</p>
+        <p>Made with ❤️ by <strong>Sainvi</strong> • November 2025</p>
       </footer>
     </div>
   </body>

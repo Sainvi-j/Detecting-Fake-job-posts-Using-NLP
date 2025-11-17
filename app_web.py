@@ -1,10 +1,9 @@
-# FINAL WITH LOGGING + HISTORY
+# app_final.py - SAINVI'S MASTERPIECE (Beautiful UI + Full SQLite DB)
 from flask import Flask, render_template, request
 import joblib
+import sqlite3
 import re
-import csv
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 
@@ -12,17 +11,35 @@ app = Flask(__name__)
 model = joblib.load('fake_job_model.pkl')
 vectorizer = joblib.load('tfidf_vectorizer.pkl')
 
-# Global state
-fake_count = 0
-real_count = 0
-last_prediction = None
-LOG_FILE = 'predictions_log.csv'
+# DB Setup
+DB_NAME = "job_predictions.db"
 
-# Create CSV with headers if not exists
-if not os.path.exists(LOG_FILE):
-    with open(LOG_FILE, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(['timestamp', 'job_description', 'prediction', 'confidence'])
+def init_db():
+    with sqlite3.connect(DB_NAME) as conn:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS predictions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_description TEXT,
+                prediction TEXT,
+                confidence REAL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+    print("Database ready!")
+
+init_db()
+
+# Global live counters (refreshed from DB on startup)
+def get_counts():
+    with sqlite3.connect(DB_NAME) as conn:
+        cur = conn.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Fake Job'")
+        fake = cur.fetchone()[0]
+        cur = conn.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Real Job'")
+        real = cur.fetchone()[0]
+    return fake, real
+
+fake_count, real_count = get_counts()
+last_prediction = None
 
 @app.route('/')
 def home():
@@ -39,19 +56,12 @@ def predict():
 
     # Smart Error Handling
     if not job_desc:
-        return render_template('index.html',
-                               error="Please enter a job description.",
-                               fake=fake_count, real=real_count, last=last_prediction)
-
+        return render_template('index.html', error="Please enter a job description.", fake=fake_count, real=real_count, last=last_prediction)
     if len(job_desc.split()) < 8:
-        return render_template('index.html',
-                               error="Too short! Please enter at least 8 words.",
-                               fake=fake_count, real=real_count, last=last_prediction)
-
+        return render_template('index.html', error="Too short! Please enter at least 8 words.", fake=fake_count, real=real_count, last=last_prediction)
     if re.search(r'[a-zA-Z]', job_desc) is None:
-        return render_template('index.html',
-                               error="Only symbols/numbers? Please enter real text.",
-                               fake=fake_count, real=real_count, last=last_prediction)
+        return render_template('index.html', error="Only symbols/numbers? Please enter real text.", fake=fake_count, real=real_count, last=last_prediction)
+
     # Predict
     X_input = vectorizer.transform([job_desc])
     pred = model.predict(X_input)[0]
@@ -60,24 +70,24 @@ def predict():
     label = "Fake Job" if pred == 1 else "Real Job"
     confidence = round(prob_fake * 100, 2) if pred == 1 else round((1 - prob_fake) * 100, 2)
 
-    # Update counters
+    # Save to DB
+    with sqlite3.connect(DB_NAME) as conn:
+        conn.execute("INSERT INTO predictions (job_description, prediction, confidence) VALUES (?, ?, ?)",
+                     (job_desc, label, confidence))
+        conn.commit()
+
+    # Update live counters
     if pred == 1:
         fake_count += 1
     else:
         real_count += 1
 
-    # Save last prediction
+    # Save last prediction for homepage
     last_prediction = {
         'label': label,
         'confidence': confidence,
         'desc': job_desc[:200] + "..." if len(job_desc) > 200 else job_desc
     }
-
-    # LOG TO CSV
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_FILE, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow([timestamp, job_desc, label, f"{confidence}%"])
 
     return render_template('result.html',
                            label=label,
@@ -86,19 +96,12 @@ def predict():
                            fake=fake_count,
                            real=real_count)
 
-# NEW: History Page
 @app.route('/history')
 def history():
-    if not os.path.exists(LOG_FILE):
-        return render_template('history.html', predictions=[])
-    
-    with open(LOG_FILE, 'r', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        headers = next(reader)  # Skip header
-        predictions = list(reader)
-        predictions.reverse()  # Latest first
-    
-    return render_template('history.html', predictions=predictions)
+    with sqlite3.connect(DB_NAME) as conn:
+        cur = conn.execute("SELECT job_description, prediction, confidence, timestamp FROM predictions ORDER BY id DESC")
+        records = cur.fetchall()
+    return render_template('history.html', records=records)
 
 if __name__ == '__main__':
     app.run(debug=True)
