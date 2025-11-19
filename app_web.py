@@ -52,7 +52,7 @@ def get_counts():
 fake_count, real_count = get_counts()
 last_prediction = None
 
-# ==================== PUBLIC APP ====================
+# PUBLIC APP
 @app.route('/')
 def home():
     return render_template('index.html', fake=fake_count, real=real_count, last=last_prediction)
@@ -106,7 +106,7 @@ def history():
         records = cur.fetchall()
     return render_template('history.html', records=records)
 
-# ==================== ADMIN PANEL ====================
+# ADMIN PANEL 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -125,16 +125,43 @@ def admin_login():
 def admin_dashboard():
     if not session.get('admin_logged_in'):
         return redirect('/admin_login')
-    fake, real = get_counts()
-    total = fake + real
-    return render_template('admin_dashboard.html', total=total, fake=fake, real=real)
+
+    conn = sqlite3.connect('job_predictions.db')
+    cursor = conn.cursor()
+
+    # Total counts
+    fake_count = cursor.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Fake Job'").fetchone()[0]
+    real_count = cursor.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Real Job'").fetchone()[0]
+
+    # Average confidence
+    avg_fake = cursor.execute("SELECT AVG(confidence) FROM predictions WHERE prediction='Fake Job'").fetchone()[0]
+    avg_real = cursor.execute("SELECT AVG(confidence) FROM predictions WHERE prediction='Real Job'").fetchone()[0]
+    avg_fake_conf = round(avg_fake, 2) if avg_fake else 0
+    avg_real_conf = round(avg_real, 2) if avg_real else 0
+
+    # Daily trend
+    daily_data = cursor.execute("""
+        SELECT DATE(timestamp), COUNT(*)
+        FROM predictions
+        GROUP BY DATE(timestamp)
+        ORDER BY DATE(timestamp)
+    """).fetchall()
+    dates = [row[0] for row in daily_data]
+    counts = [row[1] for row in daily_data]
+
+    conn.close()
+
+    return render_template('admin_dashboard.html',
+                           fake=fake_count, real=real_count,
+                           avg_fake_conf=avg_fake_conf, avg_real_conf=avg_real_conf,
+                           dates=dates, counts=counts)
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
 
-# ==================== RUN ====================
+# RUN
 if __name__ == '__main__':
     print("="*60)
     print("SAINVI'S FAKE JOB DETECTOR + ADMIN PANEL IS LIVE!")
