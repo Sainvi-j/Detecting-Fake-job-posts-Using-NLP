@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Fake Job Detector</title>
+    <title>Fake Job Detector - Sainvi</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
@@ -22,22 +22,31 @@
         padding: 40px;
         border-radius: 20px;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        position: relative;
       }
       h1 {
         text-align: center;
         color: #4a00e0;
+        margin-bottom: 10px;
+      }
+      p.subtitle {
+        text-align: center;
+        color: #666;
+        font-size: 1.1em;
       }
       textarea {
-        width: 95%;
+        width: 100%;
         height: 140px;
         padding: 15px;
         border: 2px solid #ddd;
         border-radius: 12px;
         font-size: 16px;
+        box-sizing: border-box;
       }
       button {
-        width: 99%;
+        width: 100%;
         padding: 15px;
+        margin-top: 15px;
         background: #8e2de2;
         color: white;
         border: none;
@@ -45,20 +54,20 @@
         font-size: 18px;
         font-weight: 600;
         cursor: pointer;
+        transition: 0.3s;
       }
       button:hover {
-        background: #7919c2;
-      }
-      .alert {
-        padding: 15px;
-        border-radius: 10px;
-        margin: 20px 0;
-        font-weight: bold;
+        background: #7919c2ff;
+        transform: translateY(-2px);
       }
       .error {
+        padding: 15px;
         background: #ffebee;
         color: #c62828;
         border-left: 5px solid #c62828;
+        border-radius: 10px;
+        margin: 20px 0;
+        font-weight: bold;
       }
       .last-pred {
         background: #e8f5e8;
@@ -68,10 +77,11 @@
         border-left: 5px solid #4caf50;
       }
       .badge {
-        padding: 5px 12px;
+        padding: 6px 14px;
         border-radius: 20px;
         color: white;
-        font-size: 0.9em;
+        font-weight: bold;
+        font-size: 0.95em;
       }
       .fake-badge {
         background: #e74c3c;
@@ -84,7 +94,7 @@
         background: #f8f9fa;
         padding: 20px;
         border-radius: 12px;
-        margin: 20px 0;
+        margin: 25px 0;
       }
       .fake {
         color: #e74c3c;
@@ -98,27 +108,49 @@
         text-align: center;
         margin-top: 50px;
         color: #aaa;
+        font-size: 0.9em;
+      }
+
+      /* ADMIN BUTTON - TOP RIGHT CORNER */
+      .admin-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(121, 25, 194, 1);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: 0.3s;
+      }
+      .admin-btn:hover {
+        background: rgba(121, 25, 194, 1);
+        transform: scale(1.05);
       }
     </style>
   </head>
   <body>
     <div class="container">
+      <!-- ADMIN BUTTON (Beautiful!) -->
+      <a href="/admin_login" class="admin-btn">⚙️ Admin Panel</a>
+
       <h1>Fake Job Detector</h1>
-      <p style="text-align: center; color: #666">
-        AI-powered scam detection • November 2025
-      </p>
+      <p class="subtitle">AI-powered scam detection • November 2025</p>
 
       <form action="/predict" method="POST">
         <textarea
           name="job_description"
-          placeholder="Paste job description here..."
+          placeholder="Paste the full job post here..."
           required
         ></textarea>
         <button type="submit">Check Now</button>
       </form>
 
       {% if error %}
-      <div class="alert error">{{ error }}</div>
+      <div class="error">{{ error }}</div>
       {% endif %} {% if last %}
       <div class="last-pred">
         <strong>Last Prediction:</strong><br />
@@ -143,11 +175,11 @@
 
       <div class="tips">
         <h3>How to Spot Fake Jobs</h3>
-        <ul style="text-align: left">
-          <li>Never pay to apply</li>
-          <li>No real job asks for "training fee"</li>
-          <li>Too good to be true = fake</li>
-          <li>Check company on Google/LinkedIn</li>
+        <ul style="text-align: left; line-height: 1.8">
+          <li>Never pay money to apply</li>
+          <li>Beware of "work from home + high pay + no experience"</li>
+          <li>Check company website & LinkedIn</li>
+          <li>Avoid "training fee" or "registration fee"</li>
         </ul>
       </div>
 
@@ -155,7 +187,6 @@
         <a
           href="/history"
           style="
-            display: inline-block;
             padding: 12px 30px;
             background: #8e2de2;
             color: white;

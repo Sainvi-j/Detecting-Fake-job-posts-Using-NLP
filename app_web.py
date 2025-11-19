@@ -1,21 +1,24 @@
-# (Beautiful UI + Full SQLite DB)
-from flask import Flask, render_template, request
-import joblib
-import sqlite3
-import re
+# FINAL PROJECT - Fake Job Detector + Admin Panel
+# Full-Stack | SQLite DB | Session Auth | Beautiful UI
+
+
+from flask import Flask, render_template, request, redirect, session
+import joblib, sqlite3, re
 from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = "sainvi_final_project_2025_secure"
 
-# Load model
+# Load ML Model
 model = joblib.load('fake_job_model.pkl')
 vectorizer = joblib.load('tfidf_vectorizer.pkl')
 
-# DB Setup
 DB_NAME = "job_predictions.db"
 
+# Initialize Database + Admin User
 def init_db():
     with sqlite3.connect(DB_NAME) as conn:
+        # Predictions Table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS predictions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,76 +28,76 @@ def init_db():
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-    print("Database ready!")
+        # Admin Table
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS admin (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE,
+                password TEXT
+            )
+        ''')
+        # Default Admin (only once)
+        conn.execute("INSERT OR IGNORE INTO admin (username, password) VALUES ('admin', 'admin123')")
+    print("Database & Admin Ready!")
 
 init_db()
 
-# Global live counters (refreshed from DB on startup)
+# Get Live Counts from DB
 def get_counts():
     with sqlite3.connect(DB_NAME) as conn:
-        cur = conn.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Fake Job'")
-        fake = cur.fetchone()[0]
-        cur = conn.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Real Job'")
-        real = cur.fetchone()[0]
+        fake = conn.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Fake Job'").fetchone()[0] or 0
+        real = conn.execute("SELECT COUNT(*) FROM predictions WHERE prediction='Real Job'").fetchone()[0] or 0
     return fake, real
 
 fake_count, real_count = get_counts()
 last_prediction = None
 
+# ==================== PUBLIC APP ====================
 @app.route('/')
 def home():
-    return render_template('index.html',
-                           fake=fake_count,
-                           real=real_count,
-                           last=last_prediction)
+    return render_template('index.html', fake=fake_count, real=real_count, last=last_prediction)
 
 @app.route('/predict', methods=['POST'])
 def predict():
     global fake_count, real_count, last_prediction
-
     job_desc = request.form.get('job_description', '').strip()
 
-    # Smart Error Handling
+    # Smart Validation
     if not job_desc:
-        return render_template('index.html', error="Please enter a job description.", fake=fake_count, real=real_count, last=last_prediction)
-    if len(job_desc.split()) < 8:
-        return render_template('index.html', error="Too short! Please enter at least 8 words.", fake=fake_count, real=real_count, last=last_prediction)
-    if re.search(r'[a-zA-Z]', job_desc) is None:
-        return render_template('index.html', error="Only symbols/numbers? Please enter real text.", fake=fake_count, real=real_count, last=last_prediction)
+        error = "Please enter a job description."
+    elif len(job_desc.split()) < 8:
+        error = "Too short! Please enter at least 8 words."
+    elif re.search(r'[a-zA-Z]', job_desc) is None:
+        error = "Only symbols/numbers? Please enter real text."
+    else:
+        error = None
+
+    if error:
+        return render_template('index.html', error=error, fake=fake_count, real=real_count, last=last_prediction)
 
     # Predict
-    X_input = vectorizer.transform([job_desc])
-    pred = model.predict(X_input)[0]
-    prob_fake = model.predict_proba(X_input)[0][1]
-
+    X = vectorizer.transform([job_desc])
+    pred = model.predict(X)[0]
+    prob = model.predict_proba(X)[0][1]
     label = "Fake Job" if pred == 1 else "Real Job"
-    confidence = round(prob_fake * 100, 2) if pred == 1 else round((1 - prob_fake) * 100, 2)
+    confidence = round(prob * 100, 2) if pred == 1 else round((1 - prob) * 100, 2)
 
     # Save to DB
     with sqlite3.connect(DB_NAME) as conn:
         conn.execute("INSERT INTO predictions (job_description, prediction, confidence) VALUES (?, ?, ?)",
                      (job_desc, label, confidence))
-        conn.commit()
 
-    # Update live counters
-    if pred == 1:
-        fake_count += 1
-    else:
-        real_count += 1
+    # Update counters
+    if pred == 1: fake_count += 1
+    else: real_count += 1
 
-    # Save last prediction for homepage
     last_prediction = {
-        'label': label,
-        'confidence': confidence,
+        'label': label, 'confidence': confidence,
         'desc': job_desc[:200] + "..." if len(job_desc) > 200 else job_desc
     }
 
-    return render_template('result.html',
-                           label=label,
-                           confidence=confidence,
-                           description=job_desc,
-                           fake=fake_count,
-                           real=real_count)
+    return render_template('result.html', label=label, confidence=confidence,
+                           description=job_desc, fake=fake_count, real=real_count)
 
 @app.route('/history')
 def history():
@@ -103,5 +106,39 @@ def history():
         records = cur.fetchall()
     return render_template('history.html', records=records)
 
+# ==================== ADMIN PANEL ====================
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        with sqlite3.connect(DB_NAME) as conn:
+            cur = conn.execute("SELECT * FROM admin WHERE username=? AND password=?", (username, password))
+            admin = cur.fetchone()
+        if admin:
+            session['admin_logged_in'] = True
+            return redirect('/admin_dashboard')
+        return render_template('admin_login.html', error="Invalid username or password")
+    return render_template('admin_login.html')
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if not session.get('admin_logged_in'):
+        return redirect('/admin_login')
+    fake, real = get_counts()
+    total = fake + real
+    return render_template('admin_dashboard.html', total=total, fake=fake, real=real)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
+# ==================== RUN ====================
 if __name__ == '__main__':
+    print("="*60)
+    print("SAINVI'S FAKE JOB DETECTOR + ADMIN PANEL IS LIVE!")
+    print("Public App : http://127.0.0.1:5000")
+    print("Admin Login: http://127.0.0.1:5000/admin_login (admin / admin123)")
+    print("="*60)
     app.run(debug=True)
