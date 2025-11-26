@@ -1,7 +1,0 @@
-timestamp,job_description,prediction,confidence
-2025-11-13 18:54:29,We are hiring a Senior Data Scientist with 5+ years experience in Python and machine learning. Full-time in Bangalore office.,Real Job,79.44%
-2025-11-13 18:54:44,"Urgent! Work from home, limited vacancies, pay $99 training fee to start. Register now!",Fake Job,71.17%
-2025-11-13 19:23:17,"Urgent! Work from home, limited vacancies, pay $99 training fee to start. Register now!",Fake Job,71.17%
-2025-11-13 19:23:35,We are hiring a Senior Data Scientist with 5+ years experience in Python and machine learning. Full-time in Bangalore office.,Real Job,79.44%
-2025-11-14 19:00:29,WE are mass hiring! just one step application and you can get your dream job! apply now limited seat..,Real Job,91.73%
-2025-11-14 19:00:42,"We are hiring a python developer for our team, required the basics and knowledge of operation on SQL...",Real Job,79.2%
