@@ -69,6 +69,17 @@
         font-weight: 600;
         transition: 0.3s;
       }
+      .btn1 {
+        display: inline-block;
+        padding: 14px 30px;
+        margin: 10px;
+        background: #e28a2dff;
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: 0.3s;
+      }
       .btn:hover {
         background: #7919c2;
         transform: translateY(-3px);
@@ -112,6 +123,10 @@
       <div class="btn-group">
         <a href="/history" class="btn">View Full History</a>
         <a href="/" class="btn">Back to Detector</a>
+        <a href="javascript:void(0)" onclick="confirmRetrain()" class="btn1">
+          <span class="mr-2">Refresh</span> Retrain Model
+        </a>
+        <a href="/retrain_logs" class="btn"> View Training Logs </a>
         <a href="/logout" class="btn logout">Logout</a>
       </div>
 
@@ -194,6 +209,25 @@
               }
           }
       });
+    </script>
+    <script>
+      function confirmRetrain() {
+        if (confirm("This will retrain the model. Continue?")) {
+          fetch("/retrain_model", { method: "POST" })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                alert(data.message);
+                // Optional: Update dashboard with new accuracy
+                document.getElementById(
+                  "last-retrain"
+                ).innerText = `Last retrained on: ${data.timestamp} | Accuracy: ${data.accuracy}%`;
+              } else {
+                alert("Retraining failed!");
+              }
+            });
+        }
+      }
     </script>
   </body>
 </html>

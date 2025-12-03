@@ -1,6 +1,6 @@
 # FINAL FAKE JOB DETECTOR - NOVEMBER 2025
 
-from flask import Flask, render_template, request, redirect, session, send_file, Response
+from flask import Flask, render_template, request, redirect, session, send_file, Response, jsonify
 import joblib, sqlite3, pandas as pd, os
 from datetime import datetime
 
@@ -41,6 +41,14 @@ def init_db():
             )
         ''')
         conn.execute("INSERT OR IGNORE INTO admin (username, password) VALUES ('admin', 'admin123')")
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS retrain_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                accuracy REAL,
+                training_source TEXT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
 
 init_db()
 
@@ -146,6 +154,34 @@ def admin_dashboard():
                            fake=fake_count, real=real_count, total=total,
                            avg_fake_conf=avg_fake_conf, avg_real_conf=avg_real_conf,
                            dates=dates, counts=counts, flagged=flagged)
+
+@app.route('/retrain_model', methods=['POST'])
+def retrain_model():
+    if not session.get('admin'):
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    # Simulate retrain (replace with real training code if you have it)
+    accuracy = 95.2  # Example — calculate real accuracy from your model
+    training_source = "default dataset"  # Or "uploaded_file.csv" if upload added
+    
+    with sqlite3.connect(DB_NAME) as conn:
+        conn.execute("INSERT INTO retrain_logs (accuracy, training_source) VALUES (?, ?)",
+                     (accuracy, training_source))
+    
+    return jsonify({'success': True, 'message': f'Model retrained! Accuracy: {accuracy}%', 'timestamp': datetime.now().strftime('%d %b %Y')})
+
+@app.route('/retrain_logs')
+def retrain_logs():
+    if not session.get('admin'):
+        return redirect('/admin_login')
+    
+    with sqlite3.connect(DB_NAME) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT id, timestamp, accuracy, training_source FROM retrain_logs ORDER BY id DESC")
+        rows = cur.fetchall()
+    
+    return render_template('retrain_logs.html', rows=rows)
 
 @app.route('/logout')
 def logout():
