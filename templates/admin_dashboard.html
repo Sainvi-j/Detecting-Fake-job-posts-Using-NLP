@@ -13,9 +13,65 @@
         font-family: "Poppins", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         margin: 0;
-        padding: 40px;
+        padding: 0;
         min-height: 100vh;
         color: #333;
+        display: flex;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 280px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px 20px;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        overflow-y: auto;
+      }
+      .sidebar h2 {
+        text-align: center;
+        color: #4a00e0;
+        margin-bottom: 50px;
+        font-size: 1.8em;
+      }
+      .nav-btn {
+        display: block;
+        width: 85%;
+        padding: 16px 20px;
+        margin: 12px 0;
+        background: #8e2de2;
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        text-align: center;
+        transition: 0.3s;
+      }
+      .nav-btn:hover {
+        background: #7919c2;
+        transform: translateX(8px);
+      }
+      .nav-btn.retrain {
+        background: #e28a2dff;
+      }
+      .nav-btn.retrain:hover {
+        background: #c97424ff;
+      }
+      .nav-btn.logout {
+        background: #e74c3c;
+      }
+      .nav-btn.logout:hover {
+        background: #c0392b;
+      }
+
+      /* MAIN CONTENT */
+      .main-content {
+        margin-left: 280px;
+        padding: 40px;
+        width: calc(100% - 280px);
       }
       .container {
         max-width: 1100px;
@@ -54,42 +110,6 @@
       canvas {
         max-height: 320px !important;
       }
-      .btn-group {
-        text-align: center;
-        margin: 40px 0;
-      }
-      .btn {
-        display: inline-block;
-        padding: 14px 30px;
-        margin: 10px;
-        background: #8e2de2;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: 0.3s;
-      }
-      .btn1 {
-        display: inline-block;
-        padding: 14px 30px;
-        margin: 10px;
-        background: #e28a2dff;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: 0.3s;
-      }
-      .btn:hover {
-        background: #7919c2;
-        transform: translateY(-3px);
-      }
-      .btn.logout {
-        background: #e74c3c;
-      }
-      .btn.logout:hover {
-        background: #c0392b;
-      }
       footer {
         text-align: center;
         color: #aaa;
@@ -98,48 +118,53 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Admin Analytics Dashboard</h1>
-      <p class="subtitle">Real-time insights from your AI Fake Job Detector</p>
-
-      <!-- 3 CHARTS: Pie, Bar, Line -->
-      <div class="charts-grid">
-        <!-- PIE CHART -->
-        <div class="chart-container">
-          <canvas id="pieChart"></canvas>
-        </div>
-
-        <!-- BAR CHART: Average Confidence -->
-        <div class="chart-container">
-          <canvas id="barChart"></canvas>
-        </div>
-
-        <!-- LINE CHART: Daily Trend (Full Width) -->
-        <div class="chart-container full-width">
-          <canvas id="lineChart"></canvas>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <a href="/history" class="btn">View Full History</a>
-        <a href="/" class="btn">Back to Detector</a>
-        <a href="javascript:void(0)" onclick="confirmRetrain()" class="btn1">
-          <span class="mr-2">Refresh</span> Retrain Model
-        </a>
-        <a href="/retrain_logs" class="btn"> View Training Logs </a>
-        <a href="/logout" class="btn logout">Logout</a>
-      </div>
-
-      <footer>
-        <p>
-          Secure Analytics Panel • Made with ❤️ by <strong>Sainvi</strong> •
-          November 2025
-        </p>
-      </footer>
+    <!-- SIDE NAVBAR -->
+    <div class="sidebar">
+      <h2>Admin Panel</h2>
+      <a href="/history" class="nav-btn">View Full History</a>
+      <a href="/" class="nav-btn">Back to Detector</a>
+      <a
+        href="javascript:void(0)"
+        onclick="confirmRetrain()"
+        class="nav-btn retrain"
+      >
+        Retrain Model
+      </a>
+      <a href="/retrain_logs" class="nav-btn">View Training Logs</a>
+      <a href="/logout" class="nav-btn logout">Logout</a>
     </div>
 
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="main-content">
+      <div class="container">
+        <h1>Admin Analytics Dashboard</h1>
+        <p class="subtitle">
+          Real-time insights from your AI Fake Job Detector
+        </p>
+
+        <div class="charts-grid">
+          <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas id="barChart"></canvas>
+          </div>
+          <div class="chart-container full-width">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+
+        <footer>
+          <p>
+            Secure Analytics Panel • Made with Love by <strong>Sainvi</strong> •
+            December 2025
+          </p>
+        </footer>
+      </div>
+    </div>
+
+    <!-- CHART.JS SCRIPTS -->
     <script>
-      // PIE CHART - Fake vs Real Ratio
       new Chart(document.getElementById('pieChart'), {
           type: 'doughnut',
           data: {
@@ -160,7 +185,6 @@
           }
       });
 
-      // BAR CHART - Average Confidence per Prediction Type
       new Chart(document.getElementById('barChart'), {
           type: 'bar',
           data: {
@@ -183,7 +207,6 @@
           }
       });
 
-      // LINE CHART - Daily Predictions Trend
       new Chart(document.getElementById('lineChart'), {
           type: 'line',
           data: {
@@ -209,22 +232,14 @@
               }
           }
       });
-    </script>
-    <script>
+
       function confirmRetrain() {
         if (confirm("This will retrain the model. Continue?")) {
           fetch("/retrain_model", { method: "POST" })
-            .then((response) => response.json())
-            .then((data) => {
-              if (data.success) {
-                alert(data.message);
-                // Optional: Update dashboard with new accuracy
-                document.getElementById(
-                  "last-retrain"
-                ).innerText = `Last retrained on: ${data.timestamp} | Accuracy: ${data.accuracy}%`;
-              } else {
-                alert("Retraining failed!");
-              }
+            .then(r => r.json())
+            .then(data => {
+              if (data.success) alert(data.message);
+              else alert("Retraining failed!");
             });
         }
       }
