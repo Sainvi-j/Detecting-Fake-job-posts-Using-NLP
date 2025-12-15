@@ -66,6 +66,12 @@
       .nav-btn.logout:hover {
         background: #c0392b;
       }
+      .nav-btn.flagged {
+        background: #f33712ff;
+      }
+      .nav-btn.flagged:hover {
+        background: #d9450bff;
+      }
 
       /* MAIN CONTENT */
       .main-content {
@@ -122,6 +128,9 @@
     <div class="sidebar">
       <h2>Admin Panel</h2>
       <a href="/history" class="nav-btn">View Full History</a>
+      <a href="/flagged" class="nav-btn flagged"
+        >View Flagged Posts ({{ flagged }})</a
+      >
       <a href="/" class="nav-btn">Back to Detector</a>
       <a
         href="javascript:void(0)"

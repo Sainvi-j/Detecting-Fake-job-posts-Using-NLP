@@ -76,10 +76,18 @@
         text-decoration: none;
         border-radius: 12px;
         font-weight: 600;
-        margin: 20px;
+        margin: 20px 10px;
+        transition: 0.3s;
       }
       a:hover {
         background: #7919c2;
+        transform: translateY(-2px);
+      }
+      .flag-btn {
+        background: #f33712ff;
+      }
+      .flag-btn:hover {
+        background: #d9450bff;
       }
       .stats {
         background: #e8f5e8;
@@ -120,7 +128,38 @@
       </div>
 
       <a href="/">Check Another Job</a>
+      <a
+        href="#"
+        class="flag-btn"
+        id="flag-btn"
+        onclick="event.preventDefault(); flagPost({{ pred_id }});"
+      >
+        Flag as Suspicious
+      </a>
 
+      <script>
+        function flagPost(predId) {
+          const btn = document.getElementById("flag-btn");
+          btn.innerText = "Flagging...";
+          btn.style.pointerEvents = "none";
+          btn.style.opacity = "0.7";
+
+          fetch(`/flag/${predId}`, { method: "GET" })
+            .then((response) => {
+              if (response.ok) {
+                btn.innerText = "✅ Flagged Successfully!";
+                btn.style.background = "#27ae60";
+              } else {
+                btn.innerText = "Failed";
+                btn.style.background = "#e74c3c";
+              }
+            })
+            .catch(() => {
+              btn.innerText = "Error";
+              btn.style.background = "#e74c3c";
+            });
+        }
+      </script>
       <footer>
         <p>Made with ❤️ by <strong>Sainvi</strong> • November 2025</p>
       </footer>

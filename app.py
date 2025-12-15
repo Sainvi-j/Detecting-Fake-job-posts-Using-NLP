@@ -1,4 +1,4 @@
-# FINAL FAKE JOB DETECTOR - NOVEMBER 2025
+# FINAL FAKE JOB DETECTOR - DECEMBER 2025 (WITH FULL FLAG FEATURE)
 
 from flask import Flask, render_template, request, redirect, session, send_file, Response, jsonify
 import joblib, sqlite3, pandas as pd, os
@@ -86,26 +86,33 @@ def predict():
     return render_template('result.html', label=label, confidence=confidence,
                            description=desc, pred_id=pred_id, fake=fake, real=real)
 
-@app.route('/flag/<int:pred_id>')
+@app.route('/flag/<int:pred_id>', methods=['GET', 'POST'])
 def flag(pred_id):
     with sqlite3.connect(DB_NAME) as conn:
-        conn.execute("INSERT INTO flagged (prediction_id) VALUES (?)", (pred_id,))
-    return "<script>alert('Flagged! Admin will review.'); window.location='/'</script>"
+        # Prevent duplicate flags (optional but good)
+        exists = conn.execute("SELECT 1 FROM flagged WHERE prediction_id = ?", (pred_id,)).fetchone()
+        if not exists:
+            conn.execute("INSERT INTO flagged (prediction_id) VALUES (?)", (pred_id,))
+            conn.commit()
+    
+    return redirect('/')
 
-@app.route('/history')
-def history():
+@app.route('/flagged')
+def flagged():
+    if not session.get('admin'):
+        return redirect('/admin_login')
+    
     with sqlite3.connect(DB_NAME) as conn:
-        cur = conn.execute("SELECT job_description, prediction, confidence, timestamp FROM predictions ORDER BY id DESC")
-        records = cur.fetchall()
-    return render_template('history.html', records=records)
-
-@app.route('/export_csv')
-def export_csv():
-    with sqlite3.connect(DB_NAME) as conn:
-        df = pd.read_sql_query("SELECT * FROM predictions ORDER BY timestamp DESC", conn)
-    output = df.to_csv(index=False)
-    return Response(output, mimetype="text/csv",
-                    headers={"Content-disposition": "attachment; filename=fake_job_predictions.csv"})
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT p.id, p.job_description, p.prediction, p.confidence, p.timestamp, f.reason, f.timestamp as flag_time
+            FROM flagged f JOIN predictions p ON f.prediction_id = p.id
+            ORDER BY f.timestamp DESC
+        """)
+        rows = cur.fetchall()
+    
+    return render_template('flagged.html', rows=rows)
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():

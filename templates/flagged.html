@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Flagged Posts - Sainvi</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 40px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+      h1 {
+        text-align: center;
+        color: #4a00e0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+      }
+      th {
+        background: #8e2de2;
+        color: white;
+        padding: 15px;
+      }
+      td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+      }
+      tr:hover {
+        background: #f8f9fa;
+      }
+      .fake {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+      .real {
+        color: #27ae60;
+        font-weight: bold;
+      }
+      .back {
+        display: inline-block;
+        padding: 12px 30px;
+        background: #8e2de2;
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+      .back:hover {
+        background: #7919c2;
+      }
+      .no-flagged {
+        text-align: center;
+        color: #777;
+        font-size: 1.2em;
+      }
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Flagged Predictions</h1>
+      <p style="text-align: center; color: #666">
+        All flagged jobs • Latest flagged first
+      </p>
+
+      {% if rows %}
+      <table>
+        <tr>
+          <th>Prediction Time</th>
+          <th>Job Description</th>
+          <th>Prediction</th>
+          <th>Confidence</th>
+          <th>Flag Reason</th>
+          <th>Flagged At</th>
+        </tr>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.timestamp }}</td>
+          <td>{{ row.job_description[:120] }}...</td>
+          <td class="{{ 'fake' if 'Fake' in row.prediction else 'real' }}">
+            {{ row.prediction }}
+          </td>
+          <td>{{ "%.2f"|format(row.confidence) }}%</td>
+          <td>{{ row.reason }}</td>
+          <td>{{ row.flag_time }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p class="no-flagged">No flagged predictions yet!</p>
+      {% endif %}
+
+      <div style="text-align: center; margin: 40px 0">
+        <a href="/admin_dashboard" class="back">Back to Dashboard</a>
+      </div>
+
+      <footer>
+        <p>Made with ❤️ by <strong>Sainvi</strong> • December 2025</p>
+      </footer>
+    </div>
+  </body>
+</html>
