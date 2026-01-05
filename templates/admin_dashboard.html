@@ -121,10 +121,69 @@
         color: #aaa;
         margin-top: 50px;
       }
+      /* MODAL */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+        background: white;
+        margin: 10% auto;
+        padding: 30px;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 32px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover {
+        color: #000;
+      }
+      .modal h2 {
+        color: #4a00e0;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .modal label {
+        display: block;
+        margin: 15px 0;
+        font-size: 1.1em;
+      }
+      .modal input[type="file"] {
+        margin: 10px 0;
+        padding: 10px;
+        width: 100%;
+      }
+      .modal button {
+        width: 100%;
+        padding: 15px;
+        background: #8e2de2;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .modal button:hover {
+        background: #7919c2;
+      }
     </style>
   </head>
   <body>
-    <!-- SIDE NAVBAR -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
       <h2>Admin Panel</h2>
       <a href="/history" class="nav-btn">View Full History</a>
@@ -132,13 +191,9 @@
         >View Flagged Posts ({{ flagged }})</a
       >
       <a href="/" class="nav-btn">Back to Detector</a>
-      <a
-        href="javascript:void(0)"
-        onclick="confirmRetrain()"
-        class="nav-btn retrain"
+      <a href="#" onclick="openModal()" class="nav-btn retrain"
+        >Retrain Model</a
       >
-        Retrain Model
-      </a>
       <a href="/retrain_logs" class="nav-btn">View Training Logs</a>
       <a href="/logout" class="nav-btn logout">Logout</a>
     </div>
@@ -169,6 +224,31 @@
             December 2025
           </p>
         </footer>
+      </div>
+    </div>
+    <!-- RETRAIN MODAL -->
+    <div id="retrainModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Retrain Model</h2>
+        <form id="retrainForm" enctype="multipart/form-data">
+          <label
+            ><input type="radio" name="source" value="default" checked /> Use
+            Default Dataset</label
+          >
+          <label
+            ><input type="radio" name="source" value="upload" /> Upload New
+            Dataset (.csv)</label
+          >
+          <input
+            type="file"
+            name="dataset"
+            id="fileInput"
+            accept=".csv"
+            style="display: none"
+          />
+          <button type="submit">Confirm & Retrain</button>
+        </form>
       </div>
     </div>
 
@@ -252,6 +332,41 @@
             });
         }
       }
+    </script>
+    <script>
+      function openModal() {
+        document.getElementById("retrainModal").style.display = "block";
+      }
+      function closeModal() {
+        document.getElementById("retrainModal").style.display = "none";
+      }
+
+      document.querySelectorAll('input[name="source"]').forEach((radio) => {
+        radio.addEventListener("change", function () {
+          document.getElementById("fileInput").style.display =
+            this.value === "upload" ? "block" : "none";
+        });
+      });
+
+      document
+        .getElementById("retrainForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          fetch("/retrain_model", { method: "POST", body: formData })
+            .then((r) => r.json())
+            .then((data) => {
+              alert(data.message + "\nSource: " + data.source);
+              closeModal();
+              location.reload();
+            })
+            .catch(() => alert("Error during retraining"));
+        });
+
+      window.onclick = function (event) {
+        if (event.target == document.getElementById("retrainModal"))
+          closeModal();
+      };
     </script>
   </body>
 </html>
