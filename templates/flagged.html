@@ -2,122 +2,273 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flagged Posts - Sainvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
     <style>
       body {
-        font-family: "Poppins", sans-serif;
+        font-family: "Inter", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 40px;
-        min-height: 100vh;
+        background-attachment: fixed;
       }
-      .container {
-        max-width: 1100px;
-        margin: auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      h1 {
-        text-align: center;
-        color: #4a00e0;
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 25px 0;
-        background: white;
+      .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
       }
-      th {
-        background: #8e2de2;
-        color: white;
-        padding: 15px;
+      .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
       }
-      td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-      }
-      tr:hover {
-        background: #f8f9fa;
-      }
-      .fake {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-      .real {
-        color: #27ae60;
-        font-weight: bold;
-      }
-      .back {
-        display: inline-block;
-        padding: 12px 30px;
-        background: #8e2de2;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-      }
-      .back:hover {
-        background: #7919c2;
-      }
-      .no-flagged {
-        text-align: center;
-        color: #777;
-        font-size: 1.2em;
-      }
-      footer {
-        text-align: center;
-        margin-top: 50px;
-        color: #aaa;
+      .table-row-hover:hover {
+        background: linear-gradient(
+          90deg,
+          rgba(251, 146, 60, 0.05) 0%,
+          rgba(239, 68, 68, 0.05) 100%
+        );
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <h1>Flagged Predictions</h1>
-      <p style="text-align: center; color: #666">
-        All flagged jobs • Latest flagged first
-      </p>
+  <body class="min-h-screen p-4 sm:p-6 lg:p-10">
+    <!-- Floating Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-orange-300/20 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-96 h-96 bg-red-300/20 rounded-full blur-3xl"
+      ></div>
+    </div>
 
-      {% if rows %}
-      <table>
-        <tr>
-          <th>Prediction Time</th>
-          <th>Job Description</th>
-          <th>Prediction</th>
-          <th>Confidence</th>
-          <th>Flag Reason</th>
-          <th>Flagged At</th>
-        </tr>
-        {% for row in rows %}
-        <tr>
-          <td>{{ row.timestamp }}</td>
-          <td>{{ row.job_description[:120] }}...</td>
-          <td class="{{ 'fake' if 'Fake' in row.prediction else 'real' }}">
-            {{ row.prediction }}
-          </td>
-          <td>{{ "%.2f"|format(row.confidence) }}%</td>
-          <td>{{ row.reason }}</td>
-          <td>{{ row.flag_time }}</td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% else %}
-      <p class="no-flagged">No flagged predictions yet!</p>
-      {% endif %}
+    <!-- Main Container -->
+    <div class="relative max-w-6xl mx-auto">
+      <div class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10">
+        <!-- Header -->
+        <div class="text-center mb-10">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+              ></path>
+            </svg>
+          </div>
+          <h1
+            class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600 mb-3"
+          >
+            Flagged Predictions
+          </h1>
+          <p class="text-gray-500">All flagged jobs • Latest flagged first</p>
+        </div>
 
-      <div style="text-align: center; margin: 40px 0">
-        <a href="/admin_dashboard" class="back">Back to Dashboard</a>
+        {% if rows %}
+        <!-- Table -->
+        <div
+          class="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm"
+        >
+          <table class="w-full">
+            <thead>
+              <tr
+                class="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+              >
+                <th
+                  class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-2xl"
+                >
+                  Prediction Time
+                </th>
+                <th
+                  class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Job Description
+                </th>
+                <th
+                  class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Prediction
+                </th>
+                <th
+                  class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Confidence
+                </th>
+                <th
+                  class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Flag Reason
+                </th>
+                <th
+                  class="px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-2xl"
+                >
+                  Flagged At
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for row in rows %}
+              <tr class="table-row-hover transition-colors duration-200">
+                <td class="px-4 py-4 text-gray-600 text-sm whitespace-nowrap">
+                  {{ row.timestamp }}
+                </td>
+                <td
+                  class="px-4 py-4 text-gray-700 text-sm max-w-[200px] truncate"
+                >
+                  {{ row.job_description[:120] }}...
+                </td>
+                <td class="px-4 py-4">
+                  <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold {{ 'bg-red-100 text-red-700' if 'Fake' in row.prediction else 'bg-emerald-100 text-emerald-700' }}"
+                  >
+                    {% if 'Fake' in row.prediction %}
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    {% else %}
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    {% endif %} {{ row.prediction }}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-gray-600 font-medium text-sm">
+                  {{ "%.2f"|format(row.confidence) }}%
+                </td>
+                <td class="px-4 py-4">
+                  <span
+                    class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-orange-100 text-orange-700 text-sm"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    {{ row.reason }}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-gray-600 text-sm whitespace-nowrap">
+                  {{ row.flag_time }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+          <div
+            class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-orange-100 mb-4"
+          >
+            <svg
+              class="w-10 h-10 text-orange-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+              ></path>
+            </svg>
+          </div>
+          <p class="text-gray-500 text-lg">No flagged predictions yet!</p>
+          <p class="text-gray-400 text-sm mt-1">
+            Posts flagged by users will appear here
+          </p>
+        </div>
+        {% endif %}
+
+        <!-- Back Button -->
+        <div class="text-center mt-10">
+          <a
+            href="/admin_dashboard"
+            class="inline-flex items-center justify-center gap-2 btn-gradient text-white px-8 py-3.5 rounded-xl font-semibold"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              ></path>
+            </svg>
+            Back to Dashboard
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-10 pt-6 border-t border-gray-100">
+          <p class="text-gray-400 text-sm">
+            Made with <span class="text-red-400">❤️</span> by
+            <span class="font-semibold text-gray-500">Sainvi</span> • January
+            2026
+          </p>
+        </footer>
       </div>
-
-      <footer>
-        <p>Made with ❤️ by <strong>Sainvi</strong> • December 2025</p>
-      </footer>
     </div>
   </body>
 </html>

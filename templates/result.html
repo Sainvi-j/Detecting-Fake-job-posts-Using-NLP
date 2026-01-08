@@ -2,167 +2,366 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Result - Sainvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                50: "#f5f3ff",
+                100: "#ede9fe",
+                200: "#ddd6fe",
+                300: "#c4b5fd",
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                700: "#6d28d9",
+                800: "#5b21b6",
+                900: "#4c1d95",
+              },
+            },
+            animation: {
+              float: "float 6s ease-in-out infinite",
+              "bounce-slow": "bounce 2s ease-in-out infinite",
+              "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+              "slide-up": "slide-up 0.6s ease-out",
+              "scale-in": "scale-in 0.4s ease-out",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-10px)" },
+              },
+              "pulse-glow": {
+                "0%, 100%": { boxShadow: "0 0 0 0 rgba(102, 126, 234, 0.4)" },
+                "50%": { boxShadow: "0 0 40px 10px rgba(102, 126, 234, 0.2)" },
+              },
+              "slide-up": {
+                "0%": { opacity: "0", transform: "translateY(30px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              "scale-in": {
+                "0%": { opacity: "0", transform: "scale(0.9)" },
+                "100%": { opacity: "1", transform: "scale(1)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
     <style>
       body {
-        font-family: "Poppins", sans-serif;
+        font-family: "Inter", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 40px;
-        min-height: 100vh;
+        background-size: 200% 200%;
+        animation: gradient 8s ease infinite;
       }
-      .container {
-        max-width: 800px;
-        margin: auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        text-align: center;
+      @keyframes gradient {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
       }
-      .result {
-        font-size: 40px;
-        font-weight: 600;
-        margin: 20px 0;
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      .fake {
-        color: #e74c3c;
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-      .real {
-        color: #27ae60;
+      .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
       }
-      .badge {
-        padding: 8px 20px;
-        border-radius: 30px;
-        color: white;
-        font-weight: bold;
-      }
-      .fake-badge {
-        background: #e74c3c;
-      }
-      .real-badge {
-        background: #27ae60;
-      }
-      progress {
-        width: 80%;
-        height: 35px;
-        border-radius: 20px;
-        margin: 20px auto;
-      }
-      progress::-webkit-progress-value {
-        background: linear-gradient(90deg, #8e2de2, #4a00e0);
-        border-radius: 20px;
-      }
-      progress::-webkit-progress-bar {
-        background: #eee;
-        border-radius: 20px;
-      }
-      .desc {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 30px 0;
-        text-align: left;
-      }
-      a {
-        display: inline-block;
-        padding: 12px 30px;
-        background: #8e2de2;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-        margin: 20px 10px;
-        transition: 0.3s;
-      }
-      a:hover {
-        background: #7919c2;
+      .btn-gradient:hover {
         transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
       }
-      .flag-btn {
-        background: #f33712ff;
+      .progress-bar {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 9999px;
+        height: 100%;
+        transition: width 1s ease-out;
       }
-      .flag-btn:hover {
-        background: #d9450bff;
+      .progress-container {
+        background: #e5e7eb;
+        border-radius: 9999px;
+        overflow: hidden;
       }
-      .stats {
-        background: #e8f5e8;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 20px 0;
-      }
-      footer {
-        margin-top: 50px;
-        color: #aaa;
+      .result-icon {
+        animation: scale-in 0.5s ease-out, float 6s ease-in-out infinite;
+        animation-delay: 0s, 0.5s;
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <h1>Result</h1>
-      <div class="result {{ 'fake' if label == 'Fake Job' else 'real' }}">
-        {{ label }}
-      </div>
+  <body class="min-h-screen p-4 sm:p-6 lg:p-10">
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div
-        class="badge {{ 'fake-badge' if label == 'Fake Job' else 'real-badge' }}"
+        class="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl animate-float"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/20 rounded-full blur-3xl animate-float"
+        style="animation-delay: -3s"
+      ></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative max-w-3xl mx-auto">
+      <!-- Glass Card -->
+      <div
+        class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10 text-center animate-slide-up"
       >
-        {{ confidence }}% Confidence
+        <!-- Header -->
+        <div class="mb-6">
+          <h1 class="text-2xl sm:text-3xl font-bold gradient-text mb-2">
+            Analysis Complete
+          </h1>
+          <p class="text-gray-500">AI Detection Result</p>
+        </div>
+
+        <!-- Result Icon & Label -->
+        <div class="mb-8">
+          <div
+            class="result-icon inline-flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 rounded-full {{ 'bg-gradient-to-br from-red-400 to-red-600' if label == 'Fake Job' else 'bg-gradient-to-br from-emerald-400 to-emerald-600' }} shadow-2xl mb-6"
+          >
+            {% if label == 'Fake Job' %}
+            <svg
+              class="w-12 h-12 sm:w-16 sm:h-16 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+            {% else %}
+            <svg
+              class="w-12 h-12 sm:w-16 sm:h-16 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            {% endif %}
+          </div>
+
+          <div
+            class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 {{ 'text-red-500' if label == 'Fake Job' else 'text-emerald-500' }}"
+          >
+            {{ label }}
+          </div>
+
+          <!-- Confidence Badge -->
+          <span
+            class="inline-flex items-center gap-2 px-6 py-2 rounded-full text-white font-semibold text-lg {{ 'bg-red-500' if label == 'Fake Job' else 'bg-emerald-500' }} shadow-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              ></path>
+            </svg>
+            {{ confidence }}% Confidence
+          </span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="max-w-md mx-auto mb-8">
+          <div class="flex justify-between text-sm text-gray-500 mb-2">
+            <span>Confidence Level</span>
+            <span class="font-semibold">{{ confidence }}%</span>
+          </div>
+          <div class="progress-container h-4">
+            <div class="progress-bar" style="width: {{ confidence }}%;"></div>
+          </div>
+        </div>
+
+        <!-- Job Description -->
+        <div class="bg-gray-50 rounded-2xl p-5 sm:p-6 mb-6 text-left">
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-gray-800">
+              Analyzed Job Description
+            </h3>
+          </div>
+          <p class="text-gray-600 leading-relaxed whitespace-pre-wrap">
+            {{ description }}
+          </p>
+        </div>
+
+        <!-- Session Stats -->
+        <div
+          class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-5 sm:p-6 mb-8 border border-emerald-200"
+        >
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800">
+              Session Statistics
+            </h3>
+          </div>
+          <div class="flex justify-center gap-8">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-red-500">{{ fake }}</div>
+              <div class="text-gray-500 text-sm">Fake Detected</div>
+            </div>
+            <div class="w-px bg-gray-200"></div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-emerald-500">{{ real }}</div>
+              <div class="text-gray-500 text-sm">Real Verified</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="/"
+            class="inline-flex items-center justify-center gap-2 btn-gradient text-white px-8 py-3.5 rounded-xl font-semibold text-lg"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            Check Another Job
+          </a>
+          <a
+            href="#"
+            class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-3.5 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            id="flag-btn"
+            onclick="event.preventDefault(); flagPost({{ pred_id }});"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+              ></path>
+            </svg>
+            Flag as Suspicious
+          </a>
+        </div>
+
+        <script>
+          function flagPost(predId) {
+            const btn = document.getElementById("flag-btn");
+            btn.innerHTML =
+              '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Flagging...</span>';
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.7";
+
+            fetch(`/flag/${predId}`, { method: "GET" })
+              .then((response) => {
+                if (response.ok) {
+                  btn.innerHTML =
+                    '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Flagged Successfully!</span>';
+                  btn.className = btn.className.replace(
+                    "from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600",
+                    "from-emerald-500 to-green-500"
+                  );
+                } else {
+                  btn.innerHTML =
+                    '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>Failed</span>';
+                }
+              })
+              .catch(() => {
+                btn.innerHTML =
+                  '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Error</span>';
+              });
+          }
+        </script>
+
+        <!-- Footer -->
+        <footer class="mt-10 pt-6 border-t border-gray-100">
+          <p class="text-gray-400 text-sm">
+            Made with <span class="text-red-400">❤️</span> by
+            <span class="font-semibold text-gray-500">Sainvi</span> • January
+            2026
+          </p>
+        </footer>
       </div>
-      <progress value="{{ confidence }}" max="100"></progress>
-
-      <div class="desc">
-        <p><strong>Job Description:</strong></p>
-        <p>{{ description }}</p>
-      </div>
-
-      <div class="stats">
-        <h3>Session Stats</h3>
-        <p>
-          Fake: <strong style="color: #e74c3c">{{ fake }}</strong> | Real:
-          <strong style="color: #27ae60">{{ real }}</strong>
-        </p>
-      </div>
-
-      <a href="/">Check Another Job</a>
-      <a
-        href="#"
-        class="flag-btn"
-        id="flag-btn"
-        onclick="event.preventDefault(); flagPost({{ pred_id }});"
-      >
-        Flag as Suspicious
-      </a>
-
-      <script>
-        function flagPost(predId) {
-          const btn = document.getElementById("flag-btn");
-          btn.innerText = "Flagging...";
-          btn.style.pointerEvents = "none";
-          btn.style.opacity = "0.7";
-
-          fetch(`/flag/${predId}`, { method: "GET" })
-            .then((response) => {
-              if (response.ok) {
-                btn.innerText = "✅ Flagged Successfully!";
-                btn.style.background = "#27ae60";
-              } else {
-                btn.innerText = "Failed";
-                btn.style.background = "#e74c3c";
-              }
-            })
-            .catch(() => {
-              btn.innerText = "Error";
-              btn.style.background = "#e74c3c";
-            });
-        }
-      </script>
-      <footer>
-        <p>Made with ❤️ by <strong>Sainvi</strong> • November 2025</p>
-      </footer>
     </div>
   </body>
 </html>

@@ -2,349 +2,625 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Sainvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                50: "#f5f3ff",
+                100: "#ede9fe",
+                200: "#ddd6fe",
+                300: "#c4b5fd",
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                700: "#6d28d9",
+                800: "#5b21b6",
+                900: "#4c1d95",
+              },
+            },
+          },
+        },
+      };
+    </script>
     <style>
       body {
-        font-family: "Poppins", sans-serif;
+        font-family: "Inter", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        color: #333;
-        display: flex;
+        background-attachment: fixed;
       }
-
-      /* SIDEBAR */
-      .sidebar {
-        width: 280px;
+      .glass-card {
         background: rgba(255, 255, 255, 0.95);
-        padding: 40px 20px;
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        overflow-y: auto;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      .sidebar h2 {
-        text-align: center;
-        color: #4a00e0;
-        margin-bottom: 50px;
-        font-size: 1.8em;
+      .glass-sidebar {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
       }
-      .nav-btn {
-        display: block;
-        width: 85%;
-        padding: 16px 20px;
-        margin: 12px 0;
-        background: #8e2de2;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-        text-align: center;
-        transition: 0.3s;
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-      .nav-btn:hover {
-        background: #7919c2;
-        transform: translateX(8px);
+      .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
       }
-      .nav-btn.retrain {
-        background: #e28a2dff;
+      .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
       }
-      .nav-btn.retrain:hover {
-        background: #c97424ff;
+      .nav-link {
+        transition: all 0.3s ease;
       }
-      .nav-btn.logout {
-        background: #e74c3c;
+      .nav-link:hover {
+        transform: translateX(6px);
       }
-      .nav-btn.logout:hover {
-        background: #c0392b;
+      .chart-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
       }
-      .nav-btn.flagged {
-        background: #f33712ff;
+      /* Mobile menu */
+      .mobile-menu-open .mobile-menu {
+        transform: translateX(0);
       }
-      .nav-btn.flagged:hover {
-        background: #d9450bff;
-      }
-
-      /* MAIN CONTENT */
-      .main-content {
-        margin-left: 280px;
-        padding: 40px;
-        width: calc(100% - 280px);
-      }
-      .container {
-        max-width: 1100px;
-        margin: 0 auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-      }
-      h1 {
-        text-align: center;
-        color: #4a00e0;
-        margin-bottom: 10px;
-      }
-      p.subtitle {
-        text-align: center;
-        color: #666;
-        font-size: 1.1em;
-        margin-bottom: 40px;
-      }
-      .charts-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        margin-bottom: 40px;
-      }
-      .chart-container {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-      .full-width {
-        grid-column: 1 / -1;
-      }
-      canvas {
-        max-height: 320px !important;
-      }
-      footer {
-        text-align: center;
-        color: #aaa;
-        margin-top: 50px;
-      }
-      /* MODAL */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-      .modal-content {
-        background: white;
-        margin: 10% auto;
-        padding: 30px;
-        width: 90%;
-        max-width: 500px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      }
-      .close {
-        color: #aaa;
-        float: right;
-        font-size: 32px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .close:hover {
-        color: #000;
-      }
-      .modal h2 {
-        color: #4a00e0;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .modal label {
-        display: block;
-        margin: 15px 0;
-        font-size: 1.1em;
-      }
-      .modal input[type="file"] {
-        margin: 10px 0;
-        padding: 10px;
-        width: 100%;
-      }
-      .modal button {
-        width: 100%;
-        padding: 15px;
-        background: #8e2de2;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      .modal button:hover {
-        background: #7919c2;
+      .modal-backdrop {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
       }
     </style>
   </head>
-  <body>
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <h2>Admin Panel</h2>
-      <a href="/history" class="nav-btn">View Full History</a>
-      <a href="/flagged" class="nav-btn flagged"
-        >View Flagged Posts ({{ flagged }})</a
+  <body class="min-h-screen">
+    <!-- Mobile Menu Toggle -->
+    <button
+      onclick="toggleMobileMenu()"
+      class="lg:hidden fixed top-4 left-4 z-50 bg-white p-3 rounded-xl shadow-lg"
+    >
+      <svg
+        class="w-6 h-6 text-purple-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
       >
-      <a href="/" class="nav-btn">Back to Detector</a>
-      <a href="#" onclick="openModal()" class="nav-btn retrain"
-        >Retrain Model</a
-      >
-      <a href="/retrain_logs" class="nav-btn">View Training Logs</a>
-      <a href="/logout" class="nav-btn logout">Logout</a>
-    </div>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        ></path>
+      </svg>
+    </button>
 
-    <!-- MAIN DASHBOARD CONTENT -->
-    <div class="main-content">
-      <div class="container">
-        <h1>Admin Analytics Dashboard</h1>
-        <p class="subtitle">
-          Real-time insights from your AI Fake Job Detector
-        </p>
-
-        <div class="charts-grid">
-          <div class="chart-container">
-            <canvas id="pieChart"></canvas>
+    <!-- Sidebar -->
+    <aside
+      class="mobile-menu fixed left-0 top-0 h-full w-72 glass-sidebar shadow-2xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300"
+    >
+      <div class="p-6">
+        <!-- Logo/Brand -->
+        <div class="flex items-center gap-3 mb-10 pt-2">
+          <div
+            class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg"
+          >
+            <svg
+              class="w-7 h-7 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
+            </svg>
           </div>
-          <div class="chart-container">
-            <canvas id="barChart"></canvas>
-          </div>
-          <div class="chart-container full-width">
-            <canvas id="lineChart"></canvas>
+          <div>
+            <h2 class="text-xl font-bold gradient-text">Admin Panel</h2>
+            <p class="text-xs text-gray-400">Fake Job Detector</p>
           </div>
         </div>
 
-        <footer>
-          <p>
-            Secure Analytics Panel • Made with Love by <strong>Sainvi</strong> •
-            December 2025
+        <!-- Navigation -->
+        <nav class="space-y-2">
+          <a
+            href="/history"
+            class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-xl btn-gradient text-white font-medium"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            View Full History
+          </a>
+
+          <a
+            href="/flagged"
+            class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-medium"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+              ></path>
+            </svg>
+            Flagged Posts
+            <span class="ml-auto bg-white/20 px-2.5 py-0.5 rounded-full text-sm"
+              >{{ flagged }}</span
+            >
+          </a>
+
+          <a
+            href="/"
+            class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-xl btn-gradient text-white font-medium"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            Back to Detector
+          </a>
+
+          <a
+            href="#"
+            onclick="openModal()"
+            class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
+            Retrain Model
+          </a>
+
+          <a
+            href="/retrain_logs"
+            class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-xl btn-gradient text-white font-medium"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+            Training Logs
+          </a>
+
+          <div class="pt-4 border-t border-gray-100 mt-4">
+            <a
+              href="/logout"
+              class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                ></path>
+              </svg>
+              Logout
+            </a>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-72 p-4 sm:p-6 lg:p-10">
+      <div
+        class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10 max-w-6xl mx-auto"
+      >
+        <!-- Header -->
+        <div class="text-center mb-10">
+          <h1 class="text-3xl sm:text-4xl font-bold gradient-text mb-3">
+            Analytics Dashboard
+          </h1>
+          <p class="text-gray-500">
+            Real-time insights from your AI Fake Job Detector
+          </p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10">
+          <div
+            class="bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl p-6 text-white shadow-lg"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-white/80 text-sm font-medium">Fake Jobs</p>
+                <p class="text-3xl font-bold mt-1">{{ fake }}</p>
+              </div>
+              <div
+                class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center"
+              >
+                <svg
+                  class="w-7 h-7"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-6 text-white shadow-lg"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-white/80 text-sm font-medium">Real Jobs</p>
+                <p class="text-3xl font-bold mt-1">{{ real }}</p>
+              </div>
+              <div
+                class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center"
+              >
+                <svg
+                  class="w-7 h-7"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-white/80 text-sm font-medium">Flagged</p>
+                <p class="text-3xl font-bold mt-1">{{ flagged }}</p>
+              </div>
+              <div
+                class="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center"
+              >
+                <svg
+                  class="w-7 h-7"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div
+            class="chart-card rounded-2xl p-6 shadow-sm border border-gray-100"
+          >
+            <canvas id="pieChart"></canvas>
+          </div>
+          <div
+            class="chart-card rounded-2xl p-6 shadow-sm border border-gray-100"
+          >
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+        <div
+          class="chart-card rounded-2xl p-6 shadow-sm border border-gray-100"
+        >
+          <canvas id="lineChart"></canvas>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-10 pt-6 border-t border-gray-100">
+          <p class="text-gray-400 text-sm">
+            Secure Analytics Panel • Made with
+            <span class="text-red-400">❤️</span> by
+            <span class="font-semibold text-gray-500">Sainvi</span> • January
+            2026
           </p>
         </footer>
       </div>
-    </div>
-    <!-- RETRAIN MODAL -->
-    <div id="retrainModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Retrain Model</h2>
+    </main>
+
+    <!-- Retrain Modal -->
+    <div
+      id="retrainModal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div class="modal-backdrop absolute inset-0" onclick="closeModal()"></div>
+      <div
+        class="glass-card relative rounded-3xl shadow-2xl p-8 max-w-md w-full animate-scale-in"
+      >
+        <button
+          onclick="closeModal()"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+
+        <div class="text-center mb-6">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold gradient-text">Retrain Model</h2>
+          <p class="text-gray-500 text-sm mt-1">
+            Update your AI model with new data
+          </p>
+        </div>
+
         <form id="retrainForm" enctype="multipart/form-data">
-          <label
-            ><input type="radio" name="source" value="default" checked /> Use
-            Default Dataset</label
-          >
-          <label
-            ><input type="radio" name="source" value="upload" /> Upload New
-            Dataset (.csv)</label
-          >
+          <div class="space-y-3 mb-6">
+            <label
+              class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border-2 border-transparent hover:border-purple-200 cursor-pointer transition-all"
+            >
+              <input
+                type="radio"
+                name="source"
+                value="default"
+                checked
+                class="w-5 h-5 text-purple-600 focus:ring-purple-500"
+              />
+              <div>
+                <span class="font-medium text-gray-700"
+                  >Use Default Dataset</span
+                >
+                <p class="text-sm text-gray-400">
+                  Train using the original dataset
+                </p>
+              </div>
+            </label>
+            <label
+              class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border-2 border-transparent hover:border-purple-200 cursor-pointer transition-all"
+            >
+              <input
+                type="radio"
+                name="source"
+                value="upload"
+                class="w-5 h-5 text-purple-600 focus:ring-purple-500"
+              />
+              <div>
+                <span class="font-medium text-gray-700"
+                  >Upload New Dataset</span
+                >
+                <p class="text-sm text-gray-400">Upload a custom .csv file</p>
+              </div>
+            </label>
+          </div>
+
           <input
             type="file"
             name="dataset"
             id="fileInput"
             accept=".csv"
-            style="display: none"
+            class="hidden w-full p-3 border-2 border-dashed border-gray-300 rounded-xl mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-purple-100 file:text-purple-700 file:font-medium hover:file:bg-purple-200"
           />
-          <button type="submit">Confirm & Retrain</button>
+
+          <button
+            type="submit"
+            class="w-full btn-gradient text-white py-4 rounded-xl font-semibold text-lg flex items-center justify-center gap-2"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
+            Confirm & Retrain
+          </button>
         </form>
       </div>
     </div>
 
-    <!-- CHART.JS SCRIPTS -->
+    <!-- Chart.js Scripts -->
     <script>
       new Chart(document.getElementById('pieChart'), {
-          type: 'doughnut',
-          data: {
-              labels: ['Fake Jobs', 'Real Jobs'],
-              datasets: [{
-                  data: [{{ fake }}, {{ real }}],
-                  backgroundColor: ['#e74c3c', '#2ecc71'],
-                  borderWidth: 3,
-                  borderColor: '#fff'
-              }]
+        type: 'doughnut',
+        data: {
+          labels: ['Fake Jobs', 'Real Jobs'],
+          datasets: [{
+            data: [{{ fake }}, {{ real }}],
+            backgroundColor: ['#ef4444', '#22c55e'],
+            borderWidth: 4,
+            borderColor: '#fff',
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Fake vs Real Jobs', font: { size: 18, weight: '600' }, padding: 20 },
+            legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
           },
-          options: {
-              responsive: true,
-              plugins: {
-                  title: { display: true, text: 'Fake vs Real Jobs', font: { size: 16 } },
-                  legend: { position: 'bottom' }
-              }
-          }
+          cutout: '65%'
+        }
       });
 
       new Chart(document.getElementById('barChart'), {
-          type: 'bar',
-          data: {
-              labels: ['Fake Jobs', 'Real Jobs'],
-              datasets: [{
-                  label: 'Average Confidence (%)',
-                  data: [{{ "%.2f" % avg_fake_conf|default(0) }}, {{ "%.2f" % avg_real_conf|default(0) }}],
-                  backgroundColor: ['#e74c3c', '#2ecc71'],
-                  borderRadius: 8
-              }]
+        type: 'bar',
+        data: {
+          labels: ['Fake Jobs', 'Real Jobs'],
+          datasets: [{
+            label: 'Average Confidence (%)',
+            data: [{{ "%.2f" % avg_fake_conf|default(0) }}, {{ "%.2f" % avg_real_conf|default(0) }}],
+            backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(34, 197, 94, 0.8)'],
+            borderRadius: 12,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Average Confidence Level', font: { size: 18, weight: '600' }, padding: 20 }
           },
-          options: {
-              responsive: true,
-              plugins: {
-                  title: { display: true, text: 'Average Confidence Level', font: { size: 16 } }
-              },
-              scales: {
-                  y: { beginAtZero: true, max: 100 }
-              }
+          scales: {
+            y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
           }
+        }
       });
 
       new Chart(document.getElementById('lineChart'), {
-          type: 'line',
-          data: {
-              labels: {{ dates|safe }},
-              datasets: [{
-                  label: 'Predictions Per Day',
-                  data: {{ counts|safe }},
-                  borderColor: '#8e2de2',
-                  backgroundColor: 'rgba(142, 45, 226, 0.1)',
-                  borderWidth: 3,
-                  fill: true,
-                  tension: 0.4,
-                  pointBackgroundColor: '#8e2de2'
-              }]
+        type: 'line',
+        data: {
+          labels: {{ dates|safe }},
+          datasets: [{
+            label: 'Predictions Per Day',
+            data: {{ counts|safe }},
+            borderColor: '#8b5cf6',
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#8b5cf6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Daily Prediction Trend', font: { size: 18, weight: '600' }, padding: 20 }
           },
-          options: {
-              responsive: true,
-              plugins: {
-                  title: { display: true, text: 'Daily Prediction Trend', font: { size: 18 } }
-              },
-              scales: {
-                  y: { beginAtZero: true }
-              }
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
           }
-      });
-
-      function confirmRetrain() {
-        if (confirm("This will retrain the model. Continue?")) {
-          fetch("/retrain_model", { method: "POST" })
-            .then(r => r.json())
-            .then(data => {
-              if (data.success) alert(data.message);
-              else alert("Retraining failed!");
-            });
         }
-      }
+      });
     </script>
+
+    <!-- Modal & Menu Scripts -->
     <script>
       function openModal() {
-        document.getElementById("retrainModal").style.display = "block";
+        document.getElementById("retrainModal").classList.remove("hidden");
       }
       function closeModal() {
-        document.getElementById("retrainModal").style.display = "none";
+        document.getElementById("retrainModal").classList.add("hidden");
+      }
+      function toggleMobileMenu() {
+        document
+          .querySelector(".mobile-menu")
+          .classList.toggle("-translate-x-full");
       }
 
       document.querySelectorAll('input[name="source"]').forEach((radio) => {
         radio.addEventListener("change", function () {
-          document.getElementById("fileInput").style.display =
-            this.value === "upload" ? "block" : "none";
+          document
+            .getElementById("fileInput")
+            .classList.toggle("hidden", this.value !== "upload");
         });
       });
 
@@ -364,8 +640,7 @@
         });
 
       window.onclick = function (event) {
-        if (event.target == document.getElementById("retrainModal"))
-          closeModal();
+        if (event.target.classList.contains("modal-backdrop")) closeModal();
       };
     </script>
   </body>

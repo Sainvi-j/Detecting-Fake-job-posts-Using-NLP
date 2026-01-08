@@ -2,130 +2,266 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>History - Sainvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
     <style>
       body {
-        font-family: "Poppins", sans-serif;
+        font-family: "Inter", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 40px;
-        min-height: 100vh;
+        background-attachment: fixed;
       }
-      .container {
-        max-width: 1100px;
-        margin: auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      h1 {
-        text-align: center;
-        color: #4a00e0;
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 25px 0;
-        background: white;
+      .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
       }
-      th {
-        background: #8e2de2;
-        color: white;
-        padding: 15px;
+      .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
       }
-      td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-      }
-      tr:hover {
-        background: #f8f9fa;
-      }
-      .fake {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-      .real {
-        color: #27ae60;
-        font-weight: bold;
-      }
-      .back {
-        display: inline-block;
-        padding: 12px 30px;
-        background: #8e2de2;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-      }
-      .back:hover {
-        background: #7919c2;
-      }
-      footer {
-        text-align: center;
-        margin-top: 50px;
-        color: #aaa;
+      .table-row-hover:hover {
+        background: linear-gradient(
+          90deg,
+          rgba(102, 126, 234, 0.05) 0%,
+          rgba(118, 75, 162, 0.05) 100%
+        );
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <h1>Prediction History</h1>
-      <p style="text-align: center; color: #666">
-        All detections ever made • Latest first
-      </p>
+  <body class="min-h-screen p-4 sm:p-6 lg:p-10">
+    <!-- Floating Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/20 rounded-full blur-3xl"
+      ></div>
+    </div>
 
-      {% if records %}
-      <table>
-        <tr>
-          <th>Time</th>
-          <th>Job Description</th>
-          <th>Prediction</th>
-          <th>Confidence</th>
-        </tr>
-        {% for job, label, conf, time in records %}
-        <tr>
-          <td>{{ time }}</td>
-          <td>{{ job[:120] }}...</td>
-          <td class="{{ 'fake' if 'Fake' in label else 'real' }}">
-            {{ label }}
-          </td>
-          <td>{{ "%.2f"|format(conf) }}%</td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% else %}
-      <p style="text-align: center; color: #777; font-size: 1.2em">
-        No predictions yet!
-      </p>
-      {% endif %}
+    <!-- Main Container -->
+    <div class="relative max-w-6xl mx-auto">
+      <div class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10">
+        <!-- Header -->
+        <div class="text-center mb-10">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-bold gradient-text mb-3">
+            Prediction History
+          </h1>
+          <p class="text-gray-500">All detections ever made • Latest first</p>
+        </div>
 
-      <div style="text-align: center; margin: 20px 0">
-        <a
-          href="/export_csv"
-          style="
-            background: #00bc8c;
-            color: white;
-            padding: 12px 35px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-          "
+        {% if records %}
+        <!-- Table -->
+        <div
+          class="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm"
         >
-          Download All Predictions (CSV)
-        </a>
-      </div>
-      <div style="text-align: center; margin: 40px 0">
-        <a href="/" class="back">Back to Detector</a>
-      </div>
+          <table class="w-full">
+            <thead>
+              <tr
+                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+              >
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-2xl"
+                >
+                  Time
+                </th>
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Job Description
+                </th>
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Prediction
+                </th>
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-2xl"
+                >
+                  Confidence
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for job, label, conf, time in records %}
+              <tr class="table-row-hover transition-colors duration-200">
+                <td class="px-6 py-4 text-gray-600 text-sm whitespace-nowrap">
+                  {{ time }}
+                </td>
+                <td class="px-6 py-4 text-gray-700 text-sm max-w-xs truncate">
+                  {{ job[:120] }}...
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold {{ 'bg-red-100 text-red-700' if 'Fake' in label else 'bg-emerald-100 text-emerald-700' }}"
+                  >
+                    {% if 'Fake' in label %}
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    {% else %}
+                    <svg
+                      class="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    {% endif %} {{ label }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-2">
+                    <div
+                      class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden"
+                    >
+                      <div
+                        class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                        style="width: {{ conf }}%"
+                      ></div>
+                    </div>
+                    <span class="text-gray-600 font-medium text-sm"
+                      >{{ "%.2f"|format(conf) }}%</span
+                    >
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+          <div
+            class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-4"
+          >
+            <svg
+              class="w-10 h-10 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              ></path>
+            </svg>
+          </div>
+          <p class="text-gray-500 text-lg">No predictions yet!</p>
+        </div>
+        {% endif %}
 
-      <footer>
-        <p>Made with ❤️ by <strong>Sainvi</strong> • November 2025</p>
-      </footer>
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+          {% if records %}
+          <a
+            href="/export_csv"
+            class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-3.5 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              ></path>
+            </svg>
+            Download CSV
+          </a>
+          {% endif %}
+          <a
+            href="/"
+            class="inline-flex items-center justify-center gap-2 btn-gradient text-white px-8 py-3.5 rounded-xl font-semibold"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              ></path>
+            </svg>
+            Back to Detector
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-10 pt-6 border-t border-gray-100">
+          <p class="text-gray-400 text-sm">
+            Made with <span class="text-red-400">❤️</span> by
+            <span class="font-semibold text-gray-500">Sainvi</span> • January
+            2026
+          </p>
+        </footer>
+      </div>
     </div>
   </body>
 </html>

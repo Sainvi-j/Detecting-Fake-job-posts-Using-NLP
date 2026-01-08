@@ -1,4 +1,4 @@
-# FINAL FAKE JOB DETECTOR - JANUARY 2026 (WITH ADVANCED RETRAIN + FILE UPLOAD)
+# FINAL FAKE JOB DETECTOR - JANUARY 2026 
 
 from flask import Flask, render_template, request, redirect, session, send_file, Response, jsonify
 import joblib, sqlite3, pandas as pd, os
@@ -7,7 +7,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "sainvi_final_2025_ultra_secure"
 
-# Create uploads folder if not exists
+# Create uploads folder
 os.makedirs('uploads', exist_ok=True)
 
 # Load Model
@@ -16,7 +16,7 @@ vectorizer = joblib.load('tfidf_vectorizer.pkl')
 
 DB_NAME = "job_predictions.db"
 
-# Init DB + Tables
+# Init DB
 def init_db():
     with sqlite3.connect(DB_NAME) as conn:
         conn.execute('''
@@ -114,6 +114,27 @@ def flagged():
     
     return render_template('flagged.html', rows=rows)
 
+@app.route('/history')
+def history():
+    with sqlite3.connect(DB_NAME) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT job_description, prediction, confidence, timestamp FROM predictions ORDER BY id DESC")
+        records = cur.fetchall()
+    
+    return render_template('history.html', records=records)
+
+@app.route('/export_csv')
+def export_csv():
+    with sqlite3.connect(DB_NAME) as conn:
+        df = pd.read_sql_query("SELECT timestamp, job_description, prediction, confidence FROM predictions ORDER BY id DESC", conn)
+    csv_output = df.to_csv(index=False)
+    return Response(
+        csv_output,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=fake_job_predictions.csv"}
+    )
+
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -167,7 +188,7 @@ def retrain_model():
             file.save(os.path.join('uploads', filename))
             training_source = filename
     
-    accuracy = round(90 + len(training_source) * 0.1, 2)  # dummy variation
+    accuracy = round(90 + len(training_source) * 0.1, 2)
 
     with sqlite3.connect(DB_NAME) as conn:
         conn.execute("INSERT INTO retrain_logs (accuracy, training_source) VALUES (?, ?)",

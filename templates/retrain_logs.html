@@ -2,133 +2,245 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Training Logs - Sainvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
     <style>
       body {
-        font-family: "Poppins", sans-serif;
+        font-family: "Inter", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 40px;
-        min-height: 100vh;
+        background-attachment: fixed;
       }
-      .container {
-        max-width: 1100px;
-        margin: auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      h1 {
-        text-align: center;
-        color: #4a00e0;
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 25px 0;
-        background: white;
+      .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
       }
-      th {
-        background: #8e2de2;
-        color: white;
-        padding: 15px;
-        text-align: left;
-      }
-      td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-      }
-      tr:hover {
-        background: #f8f9fa;
-      }
-      .accuracy-high {
-        color: #27ae60;
-        font-weight: bold;
-      }
-      .accuracy-med {
-        color: #f39c12;
-        font-weight: bold;
-      }
-      .accuracy-low {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-      .back {
-        display: inline-block;
-        padding: 12px 30px;
-        background: #8e2de2;
-        color: white;
-        text-decoration: none;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: 0.3s;
-      }
-      .back:hover {
-        background: #7919c2;
+      .btn-gradient:hover {
         transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
       }
-      .no-logs {
-        text-align: center;
-        color: #777;
-        font-size: 1.3em;
-        padding: 40px;
-      }
-      footer {
-        text-align: center;
-        margin-top: 50px;
-        color: #aaa;
+      .table-row-hover:hover {
+        background: linear-gradient(
+          90deg,
+          rgba(102, 126, 234, 0.05) 0%,
+          rgba(118, 75, 162, 0.05) 100%
+        );
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <h1>Model Retraining Logs</h1>
-      <p style="text-align: center; color: #666">
-        All retrain events • Latest first
-      </p>
+  <body class="min-h-screen p-4 sm:p-6 lg:p-10">
+    <!-- Floating Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/20 rounded-full blur-3xl"
+      ></div>
+    </div>
 
-      {% if rows|length > 0 %}
-      <table>
-        <tr>
-          <th>#</th>
-          <th>Date & Time</th>
-          <th>Accuracy</th>
-          <th>Training Source</th>
-        </tr>
-        {% for row in rows %}
-        <tr>
-          <td><strong>#{{ loop.revindex }}</strong></td>
-          <td>{{ row.timestamp }}</td>
-          <td>
-            <span
-              class="{% if row.accuracy >= 95 %}accuracy-high{% elif row.accuracy >= 90 %}accuracy-med{% else %}accuracy-low{% endif %}"
+    <!-- Main Container -->
+    <div class="relative max-w-5xl mx-auto">
+      <div class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10">
+        <!-- Header -->
+        <div class="text-center mb-10">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              {{ "%.2f" % row.accuracy }}%
-            </span>
-          </td>
-          <td>{{ row.training_source }}</td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% else %}
-      <p class="no-logs">
-        No retraining events yet.<br />Click "Retrain Model" on the dashboard to
-        start!
-      </p>
-      {% endif %}
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-bold gradient-text mb-3">
+            Model Retraining Logs
+          </h1>
+          <p class="text-gray-500">All retrain events • Latest first</p>
+        </div>
 
-      <div style="text-align: center; margin: 40px 0">
-        <a href="/admin_dashboard" class="back">Back to Dashboard</a>
+        {% if rows|length > 0 %}
+        <!-- Table -->
+        <div
+          class="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm"
+        >
+          <table class="w-full">
+            <thead>
+              <tr
+                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+              >
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider rounded-tl-2xl"
+                >
+                  #
+                </th>
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Date & Time
+                </th>
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider"
+                >
+                  Accuracy
+                </th>
+                <th
+                  class="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider rounded-tr-2xl"
+                >
+                  Training Source
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for row in rows %}
+              <tr class="table-row-hover transition-colors duration-200">
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 text-purple-700 font-bold text-sm"
+                  >
+                    {{ loop.revindex }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-gray-600 text-sm">
+                  {{ row.timestamp }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-20 h-2.5 bg-gray-200 rounded-full overflow-hidden"
+                    >
+                      <div
+                        class="h-full rounded-full {% if row.accuracy >= 95 %}bg-gradient-to-r from-emerald-400 to-green-500{% elif row.accuracy >= 90 %}bg-gradient-to-r from-amber-400 to-orange-500{% else %}bg-gradient-to-r from-red-400 to-rose-500{% endif %}"
+                        style="width: {{ row.accuracy }}%"
+                      ></div>
+                    </div>
+                    <span
+                      class="font-bold text-sm {% if row.accuracy >= 95 %}text-emerald-600{% elif row.accuracy >= 90 %}text-amber-600{% else %}text-red-600{% endif %}"
+                    >
+                      {{ "%.2f" % row.accuracy }}%
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-sm"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"
+                      ></path>
+                    </svg>
+                    {{ row.training_source }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+          <div
+            class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-100 mb-4"
+          >
+            <svg
+              class="w-10 h-10 text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              ></path>
+            </svg>
+          </div>
+          <p class="text-gray-500 text-lg font-medium">
+            No retraining events yet.
+          </p>
+          <p class="text-gray-400 text-sm mt-2">
+            Click "Retrain Model" on the dashboard to start!
+          </p>
+        </div>
+        {% endif %}
+
+        <!-- Back Button -->
+        <div class="text-center mt-10">
+          <a
+            href="/admin_dashboard"
+            class="inline-flex items-center justify-center gap-2 btn-gradient text-white px-8 py-3.5 rounded-xl font-semibold"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              ></path>
+            </svg>
+            Back to Dashboard
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-10 pt-6 border-t border-gray-100">
+          <p class="text-gray-400 text-sm">
+            Made with <span class="text-red-400">❤️</span> by
+            <span class="font-semibold text-gray-500">Sainvi</span> • January
+            2026
+          </p>
+        </footer>
       </div>
-
-      <footer>
-        <p>Made with ❤️ by <strong>Sainvi</strong> • December 2025</p>
-      </footer>
     </div>
   </body>
 </html>

@@ -2,209 +2,467 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fake Job Detector - Sainvi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              primary: {
+                50: "#f5f3ff",
+                100: "#ede9fe",
+                200: "#ddd6fe",
+                300: "#c4b5fd",
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                700: "#6d28d9",
+                800: "#5b21b6",
+                900: "#4c1d95",
+              },
+              fake: "#ef4444",
+              real: "#22c55e",
+            },
+            animation: {
+              float: "float 6s ease-in-out infinite",
+              "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              gradient: "gradient 8s ease infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-10px)" },
+              },
+              gradient: {
+                "0%, 100%": { backgroundPosition: "0% 50%" },
+                "50%": { backgroundPosition: "100% 50%" },
+              },
+            },
+          },
+        },
+      };
+    </script>
     <style>
       body {
-        font-family: "Poppins", sans-serif;
+        font-family: "Inter", sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        margin: 0;
-        padding: 40px 20px;
-        min-height: 100vh;
+        background-size: 200% 200%;
+        animation: gradient 8s ease infinite;
       }
-      .container {
-        max-width: 800px;
-        margin: auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        position: relative;
-      }
-      h1 {
-        text-align: center;
-        color: #4a00e0;
-        margin-bottom: 10px;
-      }
-      p.subtitle {
-        text-align: center;
-        color: #666;
-        font-size: 1.1em;
-      }
-      textarea {
-        width: 100%;
-        height: 140px;
-        padding: 15px;
-        border: 2px solid #ddd;
-        border-radius: 12px;
-        font-size: 16px;
-        box-sizing: border-box;
-      }
-      button {
-        width: 100%;
-        padding: 15px;
-        margin-top: 15px;
-        background: #8e2de2;
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-      button:hover {
-        background: #7919c2ff;
-        transform: translateY(-2px);
-      }
-      .error {
-        padding: 15px;
-        background: #ffebee;
-        color: #c62828;
-        border-left: 5px solid #c62828;
-        border-radius: 10px;
-        margin: 20px 0;
-        font-weight: bold;
-      }
-      .last-pred {
-        background: #e8f5e8;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 20px 0;
-        border-left: 5px solid #4caf50;
-      }
-      .badge {
-        padding: 6px 14px;
-        border-radius: 20px;
-        color: white;
-        font-weight: bold;
-        font-size: 0.95em;
-      }
-      .fake-badge {
-        background: #e74c3c;
-      }
-      .real-badge {
-        background: #27ae60;
-      }
-      .stats,
-      .tips {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 12px;
-        margin: 25px 0;
-      }
-      .fake {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-      .real {
-        color: #27ae60;
-        font-weight: bold;
-      }
-      footer {
-        text-align: center;
-        margin-top: 50px;
-        color: #aaa;
-        font-size: 0.9em;
-      }
-
-      /* ADMIN BUTTON - TOP RIGHT CORNER */
-      .admin-btn {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: rgba(121, 25, 194, 1);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 30px;
-        text-decoration: none;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
+      .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.3);
-        transition: 0.3s;
       }
-      .admin-btn:hover {
-        background: rgba(121, 25, 194, 1);
-        transform: scale(1.05);
+      .glass-card-dark {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
+      }
+      .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+      }
+      .input-glow:focus {
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+      }
+      .floating-shapes::before,
+      .floating-shapes::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        animation: float 6s ease-in-out infinite;
+      }
+      .floating-shapes::before {
+        width: 200px;
+        height: 200px;
+        top: -50px;
+        left: -50px;
+      }
+      .floating-shapes::after {
+        width: 150px;
+        height: 150px;
+        bottom: -30px;
+        right: -30px;
+        animation-delay: -3s;
       }
     </style>
   </head>
-  <body>
-    <div class="container">
-      <!-- ADMIN BUTTON (Beautiful!) -->
-      <a href="/admin_login" class="admin-btn">⚙️ Admin Panel</a>
+  <body class="min-h-screen p-4 sm:p-6 lg:p-10">
+    <!-- Floating Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl animate-float"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/20 rounded-full blur-3xl animate-float"
+        style="animation-delay: -3s"
+      ></div>
+      <div
+        class="absolute top-1/2 left-1/2 w-64 h-64 bg-violet-300/10 rounded-full blur-3xl animate-float"
+        style="animation-delay: -1.5s"
+      ></div>
+    </div>
 
-      <h1>Fake Job Detector</h1>
-      <p class="subtitle">AI-powered scam detection • November 2025</p>
-
-      <form action="/predict" method="POST">
-        <textarea
-          name="job_description"
-          placeholder="Paste the full job post here..."
-          required
-        ></textarea>
-        <button type="submit">Check Now</button>
-      </form>
-
-      {% if error %}
-      <div class="error">{{ error }}</div>
-      {% endif %} {% if last %}
-      <div class="last-pred">
-        <strong>Last Prediction:</strong><br />
-        <span
-          class="badge {{ 'fake-badge' if last.label == 'Fake Job' else 'real-badge' }}"
-        >
-          {{ last.label }} ({{ last.confidence }}%)
-        </span>
-        <p style="margin: 10px 0; font-size: 0.9em; color: #555">
-          "{{ last.desc }}"
-        </p>
-      </div>
-      {% endif %}
-
-      <div class="stats">
-        <h3>Live Detection Dashboard</h3>
-        <p>
-          Fake Jobs: <span class="fake">{{ fake }}</span> | Real Jobs:
-          <span class="real">{{ real }}</span>
-        </p>
-      </div>
-
-      <div class="tips">
-        <h3>How to Spot Fake Jobs</h3>
-        <ul style="text-align: left; line-height: 1.8">
-          <li>Never pay money to apply</li>
-          <li>Beware of "work from home + high pay + no experience"</li>
-          <li>Check company website & LinkedIn</li>
-          <li>Avoid "training fee" or "registration fee"</li>
-        </ul>
-      </div>
-
-      <div style="text-align: center; margin: 30px 0">
+    <!-- Main Container -->
+    <div class="relative max-w-3xl mx-auto">
+      <!-- Glass Card -->
+      <div
+        class="glass-card rounded-3xl shadow-2xl p-6 sm:p-10 relative overflow-hidden floating-shapes"
+      >
+        <!-- Admin Button -->
         <a
-          href="/history"
-          style="
-            padding: 12px 30px;
-            background: #8e2de2;
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-          "
+          href="/admin_login"
+          class="absolute top-4 right-4 sm:top-6 sm:right-6 glass-card-dark text-purple px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 hover:bg-white/20 transition-all duration-300 hover:scale-105 z-10"
         >
-          View Prediction History
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            ></path>
+          </svg>
+          <span class="hidden sm:inline">Admin Panel</span>
         </a>
-      </div>
 
-      <footer>
-        <p>
-          Made with ❤️ by <strong>Sainvi</strong> • Fake Job Detection Project •
-          November 2025
-        </p>
-      </footer>
+        <!-- Header -->
+        <div class="text-center mb-8 pt-6 sm:pt-0">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg mb-4 sm:mb-6"
+          >
+            <svg
+              class="w-8 h-8 sm:w-10 sm:h-10 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              ></path>
+            </svg>
+          </div>
+          <h1
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-3"
+          >
+            Fake Job Detector
+          </h1>
+          <p class="text-gray-500 text-base sm:text-lg">
+            AI-powered scam detection • January 2026
+          </p>
+        </div>
+
+        <!-- Form -->
+        <form action="/predict" method="POST" class="mb-8">
+          <div class="relative">
+            <textarea
+              name="job_description"
+              placeholder="Paste the full job posting here to analyze..."
+              required
+              class="w-full h-40 sm:h-44 p-4 sm:p-5 bg-gray-50/80 border-2 border-gray-200 rounded-2xl text-gray-700 text-base resize-none focus:outline-none focus:border-purple-400 input-glow transition-all duration-300"
+            ></textarea>
+            <div class="absolute bottom-4 right-4 text-gray-400 text-sm">
+              <svg
+                class="w-5 h-5 inline-block"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <button
+            type="submit"
+            class="w-full mt-4 btn-gradient text-white py-4 rounded-xl text-lg font-semibold flex items-center justify-center gap-3"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            Analyze Job Posting
+          </button>
+        </form>
+
+        <!-- Error Message -->
+        {% if error %}
+        <div
+          class="bg-red-50 border-l-4 border-red-500 rounded-xl p-4 mb-6 flex items-start gap-3"
+        >
+          <svg
+            class="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <p class="text-red-700 font-medium">{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Last Prediction -->
+        {% if last %}
+        <div
+          class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 mb-6"
+        >
+          <div class="flex items-center gap-3 mb-3">
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+            <span class="font-semibold text-gray-700">Last Prediction</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 mb-3">
+            <span
+              class="px-4 py-1.5 rounded-full text-white font-semibold text-sm {{ 'bg-red-500' if last.label == 'Fake Job' else 'bg-emerald-500' }}"
+            >
+              {{ last.label }}
+            </span>
+            <span class="text-gray-600 font-medium"
+              >{{ last.confidence }}% confidence</span
+            >
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
+            "{{ last.desc }}"
+          </p>
+        </div>
+        {% endif %}
+
+        <!-- Live Stats -->
+        <div
+          class="bg-gradient-to-r from-gray-50 to-slate-50 rounded-2xl p-5 sm:p-6 mb-6"
+        >
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800">
+              Live Detection Dashboard
+            </h3>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div
+              class="bg-white/80 rounded-xl p-4 text-center border border-red-100"
+            >
+              <div class="text-2xl sm:text-3xl font-bold text-red-500">
+                {{ fake }}
+              </div>
+              <div class="text-gray-500 text-sm mt-1">Fake Jobs</div>
+            </div>
+            <div
+              class="bg-white/80 rounded-xl p-4 text-center border border-emerald-100"
+            >
+              <div class="text-2xl sm:text-3xl font-bold text-emerald-500">
+                {{ real }}
+              </div>
+              <div class="text-gray-500 text-sm mt-1">Real Jobs</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div
+          class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-5 sm:p-6 mb-6 border border-amber-200"
+        >
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800">
+              How to Spot Fake Jobs
+            </h3>
+          </div>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3 text-gray-600">
+              <svg
+                class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <span>Never pay money to apply for any job</span>
+            </li>
+            <li class="flex items-start gap-3 text-gray-600">
+              <svg
+                class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <span>Beware of "work from home + high pay + no experience"</span>
+            </li>
+            <li class="flex items-start gap-3 text-gray-600">
+              <svg
+                class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <span>Always verify company website & LinkedIn profile</span>
+            </li>
+            <li class="flex items-start gap-3 text-gray-600">
+              <svg
+                class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              <span
+                >Avoid any "training fee" or "registration fee" requests</span
+              >
+            </li>
+          </ul>
+        </div>
+
+        <!-- History Button -->
+        <div class="text-center">
+          <a
+            href="/history"
+            class="inline-flex items-center gap-2 btn-gradient text-white px-8 py-3 rounded-xl font-semibold"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            View Prediction History
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-10 pt-6 border-t border-gray-100">
+          <p class="text-gray-400 text-sm">
+            Made with <span class="text-red-400">❤️</span> by
+            <span class="font-semibold text-gray-500">Sainvi</span> • Fake Job
+            Detection Project • January 2026
+          </p>
+        </footer>
+      </div>
     </div>
   </body>
 </html>
